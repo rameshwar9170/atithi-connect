@@ -1,0 +1,126 @@
+:root {
+  --primary-color: #4361ee;
+  --primary-hover: #3a56d4;
+  --text-color: #2b2d42;
+  --text-light: #6c757d;
+  --border-color: #e9ecef;
+  --bg-color: #f8f9fa;
+  --card-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+  --success-color: #2ecc71;
+  --error-color: #e74c3c;
+}
+
+.org-form-wrapper {
+  max-width: 600px;
+  margin: 32px auto;
+  background: white;
+  padding: 32px;
+  border-radius: 10px;
+  box-shadow: var(--card-shadow);
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  border: 1px solid var(--border-color);
+}
+
+.form-title {
+  text-align: center;
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--text-color);
+  margin-bottom: 1.5rem;
+}
+
+.org-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.org-form input,
+.org-form textarea {
+  padding: 12px 16px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 0.875rem;
+  color: var(--text-color);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.org-form input:focus,
+.org-form textarea:focus {
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.1);
+  outline: none;
+}
+
+.org-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.org-form button {
+  padding: 12px;
+  background: var(--primary-color);
+  color: white;
+  font-weight: 500;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.875rem;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.org-form button:disabled {
+  background: #a5b4fc;
+  cursor: not-allowed;
+}
+
+.org-form button:hover:enabled {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.form-message {
+  margin-top: 1rem;
+  text-align: center;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.form-message:empty {
+  display: none;
+}
+
+.form-message::before {
+  margin-right: 0.5rem;
+}
+
+.form-message[class*="✅"] {
+  color: var(--success-color);
+}
+
+.form-message[class*="❌"] {
+  color: var(--error-color);
+}
+
+@media (max-width: 768px) {
+  .org-form-wrapper {
+    margin: 20px;
+    padding: 20px;
+  }
+
+  .form-title {
+    font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .org-form input,
+  .org-form textarea {
+    font-size: 0.875rem;
+  }
+
+  .org-form button {
+    font-size: 0.875rem;
+  }
+}

@@ -1,0 +1,99 @@
+.branches-container {
+  padding: 1rem;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.branches-container h2 {
+  font-size: 1.75rem;
+  margin-bottom: 1.5rem;
+  color: #333;
+  text-align: center;
+}
+
+.loading-text,
+.no-branches {
+  text-align: center;
+  font-size: 1rem;
+  color: #777;
+  margin-top: 2rem;
+}
+
+.branch-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+}
+
+.branch-card {
+  background: #fff;
+  border-radius: 14px;
+  padding: 1.25rem;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+  transition: transform 0.2s ease-in-out;
+}
+
+.branch-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.branch-card h3 {
+  font-size: 1.2rem;
+  margin-bottom: 0.75rem;
+  color: #2c3e50;
+}
+
+.branch-card p {
+  margin: 0.3rem 0;
+  color: #444;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+}
+
+.branch-card .icon {
+  margin-right: 0.5rem;
+  color: #3498db;
+}
+
+.branch-card .email {
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+  color: #666;
+}
+
+.branch-card .status {
+  margin-top: 0.75rem;
+  padding: 0.3rem 0.6rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: 12px;
+  display: inline-block;
+  text-align: center;
+}
+
+.branch-card .status.active {
+  background-color: #e0f7e9;
+  color: #2ecc71;
+}
+
+.branch-card .status.inactive {
+  background-color: #fdecea;
+  color: #e74c3c;
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+  .branch-card {
+    padding: 1rem;
+  }
+
+  .branch-card h3 {
+    font-size: 1.1rem;
+  }
+
+  .branch-card p {
+    font-size: 0.9rem;
+  }
+}
