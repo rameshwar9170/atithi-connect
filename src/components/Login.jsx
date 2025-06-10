@@ -1,6 +1,10 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getAuth, signInWithEmailAndPassword } from 'firebase/auth';
+import {
+  getAuth,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth';
 import { getDatabase, ref, get } from 'firebase/database';
 import '../styles/Login.css';
 
@@ -8,69 +12,81 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+
   const navigate = useNavigate();
   const auth = getAuth();
-  const database = getDatabase(); // Realtime Database
+  const database = getDatabase();
+
+  const convertEmailToKey = (email) => email.replace(/\./g, '_');
 
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
 
+    const emailKey = convertEmailToKey(email);
+    const userRef = ref(database, `users/${emailKey}`);
+    const snapshot = await get(userRef);
+
+    if (!snapshot.exists()) {
+      setError('❌ This email is not registered in the system.');
+      return;
+    }
+
+    const userData = snapshot.val();
+
     try {
-      const userCredential = await signInWithEmailAndPassword(auth, email, password);
-
-      // Convert email to valid key format
-      const emailKey = email.replace(/\./g, '_');
-
-      // Reference to user node in Realtime DB
-      const userRef = ref(database, `users/${emailKey}`);
-      const snapshot = await get(userRef);
-
-      if (!snapshot.exists()) {
-        setError('❌ You are not registered in the system.');
-        return;
+      // Try logging in
+      await signInWithEmailAndPassword(auth, email, password);
+      handlePostLogin(userData.role, userData);
+    } catch (loginErr) {
+      try {
+        // Try creating an account just to authenticate
+        await createUserWithEmailAndPassword(auth, email, password);
+        // ✅ Do NOT write to the database again
+        handlePostLogin(userData.role, userData);
+      } catch (registerErr) {
+        console.error('Auth failed:', registerErr);
+        setError('❌ Login or registration failed. Please check credentials.');
       }
+    }
+  };
 
-      const userData = snapshot.val();
-      const role = userData.role;
-
-      if (role === 'Super Admin') {
-        navigate('/');
-      } else if (role === 'Org') {
-        navigate('/organizations-dashboard/org');
-      } else if (role === 'Branch') {
-        navigate('/branch-dashboard');
-      } else {
-        setError('❌ Invalid role assigned.');
-      }
-
-    } catch (err) {
-      console.error('Login error:', err);
-      setError('❌ Invalid credentials or network error.');
+  const handlePostLogin = (role, userData) => {
+    if (role === 'Org') {
+      localStorage.setItem('orgId', userData.orgId || '');
+      navigate('/organizations-dashboard/org');
+    } else if (role === 'Branch') {
+      localStorage.setItem('branchId', userData.branchId || '');
+      navigate('/branch-dashboard');
+    } else if (role === 'Super Admin') {
+      navigate('/');
+    } else {
+      setError('❌ Invalid role assigned.');
     }
   };
 
   return (
     <div className="login-container">
       <form onSubmit={handleLogin} className="login-form">
-        <h2>Login</h2>
+        <h2>Login or Register</h2>
         {error && <p className="error">{error}</p>}
 
-        <input 
-          type="email" 
-          placeholder="Email" 
+        <input
+          type="email"
+          placeholder="Email"
           value={email}
-          onChange={(e) => setEmail(e.target.value)} 
-          required 
+          onChange={(e) => setEmail(e.target.value)}
+          required
         />
-        <input 
-          type="password" 
-          placeholder="Password" 
+        <input
+          type="password"
+          placeholder="Password"
           value={password}
-          onChange={(e) => setPassword(e.target.value)} 
-          required 
+          onChange={(e) => setPassword(e.target.value)}
+          required
         />
-        <button type="submit">Login</button>
+
+        <button type="submit">Continue</button>
       </form>
     </div>
   );

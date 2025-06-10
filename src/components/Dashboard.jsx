@@ -14,12 +14,9 @@ import {
   FaChevronDown,
   FaSearch
 } from 'react-icons/fa';
+import { ref, get } from 'firebase/database'; // ✅ Realtime Database
+import { db } from '../firebase/config'; // ✅ Your initialized DB
 import '../styles/Dashboard.css'; // Import your CSS styles
-
-// Mock Firebase functions for demo
-const mockGetDocs = () => Promise.resolve({ size: 12 });
-const db = {};
-const collection = () => {};
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -49,8 +46,14 @@ function Dashboard() {
   useEffect(() => {
     async function fetchCount() {
       try {
-        const orgsSnapshot = await mockGetDocs();
-        setOrganizationsCount(orgsSnapshot.size);
+        const orgsRef = ref(db, 'atithi-connect/Orgs');
+        const snapshot = await get(orgsRef);
+        if (snapshot.exists()) {
+          const data = snapshot.val();
+          setOrganizationsCount(Object.keys(data).length);
+        } else {
+          setOrganizationsCount(0);
+        }
       } catch (error) {
         console.error('Error fetching organizations count:', error);
       }
@@ -100,8 +103,8 @@ function Dashboard() {
       icon: FaBuilding,
       label: 'Organizations',
       badge: organizationsCount,
-      isActive: currentPath.startsWith('/organizations') && 
-                !currentPath.includes('/branches') && 
+      isActive: currentPath.startsWith('/organizations') &&
+                !currentPath.includes('/branches') &&
                 currentPath !== '/organizations/add',
     },
     {

@@ -122,18 +122,24 @@ const navigationItems = [
     isActive: currentPath === '/organizations-dashboard/org' || currentPath === '/organizations-dashboard/org/',
   },
   {
-    path: '/organizations-dashboard/org/my-branches',
+    path: '/organizations-dashboard/org/branches/add',
     icon: FaSitemap,
     label: 'Branches',
-    badge: branchesCount,
-    isActive: currentPath.startsWith('/organizations-dashboard/org/branches') && currentPath !== '/organizations-dashboard/org/branches/add',
-  },
-  {
-    path: '/organizations-dashboard/org/branches/add',
-    icon: FaPlus,
-    label: 'Add Branch',
     isActive: currentPath === '/organizations-dashboard/org/branches/add',
   },
+  // {
+  //   path: '/organizations-dashboard/org/my-branches',
+  //   icon: FaSitemap,
+  //   label: 'Branches',
+  //   badge: branchesCount,
+  //   isActive: currentPath.startsWith('/organizations-dashboard/org/branches') && currentPath !== '/organizations-dashboard/org/branches/add',
+  // },
+  // {
+  //   path: '/organizations-dashboard/org/branches/add',
+  //   icon: FaPlus,
+  //   label: 'Add Branch',
+  //   isActive: currentPath === '/organizations-dashboard/org/branches/add',
+  // },
   {
     path: '/organizations-dashboard/org/rooms',
     icon: FaBed,

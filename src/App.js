@@ -8,10 +8,21 @@ import AddBranch from './components/AddBranch';
 import HomePage from './components/HomePage';
 import OrganizationDashboard from './components/OrganizationDashboard';
 import OrgHomePage from './components/OrgHomePage';
-import OrgMyBranches from './components/OrgMyBranches';
 import Login from './components/Login';
 import BranchDashboard from './components/BranchDashboard';
 import PrivateRoute from './components/PrivateRoute';
+import AddMyBranch from './components/AddMyBranch';
+
+// ✅ Import new branch pages
+import BranchHome from './components/branch/BranchHome';
+import OrdersPage from './components/branch/OrdersPage';
+import StaffPage from './components/branch/StaffPage';
+import MenuPage from './components/branch/MenuPage';
+import PaymentsPage from './components/branch/PaymentsPage';
+import ReportsPage from './components/branch/ReportsPage';
+import BillingPage from './components/branch/BillingPage';
+import NotificationsPage from './components/branch/NotificationsPage';
+import SettingsPage from './components/branch/SettingsPage';
 
 function App() {
   return (
@@ -21,7 +32,7 @@ function App() {
         {/* ✅ Public Route */}
         <Route path="/login" element={<Login />} />
 
-        {/* ✅ Protected Routes */}
+        {/* ✅ Admin Dashboard Routes */}
         <Route
           path="/"
           element={
@@ -37,6 +48,7 @@ function App() {
           <Route path="organizations/:orgId/add-branch" element={<AddBranch />} />
         </Route>
 
+        {/* ✅ Organization Dashboard Routes */}
         <Route
           path="organizations-dashboard"
           element={
@@ -46,20 +58,31 @@ function App() {
           }
         >
           <Route path="org" element={<OrgHomePage />} />
-          <Route path="org/my-branches" element={<OrgMyBranches />} />
-          <Route path="org/branches/add" element={<AddBranch />} />
+          <Route path="org/branches/add" element={<AddMyBranch />} />
         </Route>
 
-        <Route
-          path="/branch-dashboard"
-          element={
-            <PrivateRoute>
-              <BranchDashboard />
-            </PrivateRoute>
-          }
-        />
+        {/* ✅ Branch Dashboard Routes */}
+     <Route
+  path="/branch-dashboard"
+  element={
+    <PrivateRoute>
+      <BranchDashboard />
+    </PrivateRoute>
+  }
+>
+  <Route index element={<BranchHome />} />
+  <Route path="orders" element={<OrdersPage />} />
+  <Route path="staff" element={<StaffPage />} />
+  <Route path="menu" element={<MenuPage />} />
+  <Route path="payments" element={<PaymentsPage />} />
+  <Route path="reports" element={<ReportsPage />} />
+  <Route path="billing" element={<BillingPage />} />
+  <Route path="notifications" element={<NotificationsPage />} />
+  <Route path="settings" element={<SettingsPage />} />
+</Route>
 
-        {/* Redirect unknown routes */}
+
+        {/* ✅ Fallback Route */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>

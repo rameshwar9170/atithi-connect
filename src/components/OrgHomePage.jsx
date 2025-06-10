@@ -20,7 +20,7 @@ function OrgHomePage() {
       title: 'Branch Management',
       description: 'Manage all your branches',
       icon: <FaBuilding />,
-      path: '/organizations-dashboard/org/branches',
+      path: '/organizations-dashboard/org/my-branches',
       color: '#4A90E2'
     },
     {
