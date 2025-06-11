@@ -1,0 +1,201 @@
+/* Updated CSS */
+.menu-container {
+  padding: 30px;
+  margin: auto;
+  border-radius: 12px;
+  background: #fefefe;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+  max-width: 1200px;
+}
+
+.menu-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.add-menu-button {
+  background-color: #0d47a1;
+  color: white;
+  padding: 10px 20px;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 14px;
+}
+
+.add-menu-button:hover {
+  background-color: #1565c0;
+  transform: translateY(-2px);
+}
+
+.menu-form {
+  margin: 20px 0;
+  padding: 20px;
+  border-radius: 8px;
+  background-color: #f5faff;
+  border: 1px solid #cce4ff;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  display: block;
+  margin-bottom: 6px;
+  font-weight: 600;
+  color: #333;
+}
+
+input[type="text"],
+input[type="number"],
+select {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: border 0.3s;
+}
+
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+  border-color: #2196f3;
+  outline: none;
+}
+
+.checkbox-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.primary-button {
+  background-color: #1976d2;
+  color: #fff;
+  padding: 10px 18px;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.primary-button:hover {
+  background-color: #1565c0;
+}
+
+.success-msg {
+  color: #2e7d32;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.error-msg {
+  color: #d32f2f;
+  font-weight: bold;
+  margin-top: 10px;
+}
+
+.menu-list h3 {
+  margin-top: 30px;
+  margin-bottom: 10px;
+}
+
+.no-menu {
+  color: #777;
+  font-style: italic;
+  padding: 10px;
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+.menu-card {
+  border: 1px solid #e0e0e0;
+  padding: 20px;
+  border-radius: 12px;
+  background-color: #f8f9fa;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.menu-card:hover {
+  border-color: #2196f3;
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.1);
+  transform: translateY(-3px);
+}
+
+.menu-card h4 {
+  margin: 0 0 10px;
+  color: #2c3e50;
+  font-size: 18px;
+}
+
+.menu-card p {
+  margin: 8px 0;
+  color: #555;
+  font-size: 14px;
+}
+
+.card-buttons {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.card-buttons svg {
+  cursor: pointer;
+  font-size: 18px;
+  padding: 8px;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.card-buttons svg:first-child {
+  color: #1976d2;
+  background-color: rgba(25, 118, 210, 0.1);
+}
+
+.card-buttons svg:first-child:hover {
+  background-color: rgba(25, 118, 210, 0.2);
+  transform: scale(1.1);
+}
+
+.card-buttons svg:last-child {
+  color: #d32f2f;
+  background-color: rgba(211, 47, 47, 0.1);
+}
+
+.card-buttons svg:last-child:hover {
+  background-color: rgba(211, 47, 47, 0.2);
+  transform: scale(1.1);
+}
+
+/* Edit mode styles */
+.menu-card.edit-mode {
+  padding: 15px;
+}
+
+.menu-card.edit-mode select,
+.menu-card.edit-mode input {
+  width: 100%;
+  margin-bottom: 10px;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+}
+
+.menu-card.edit-mode .checkbox-group {
+  margin: 10px 0;
+}

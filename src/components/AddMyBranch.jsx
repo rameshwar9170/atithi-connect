@@ -80,65 +80,68 @@ const AddMyBranch = () => {
         }));
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        if (!organization) return;
+   const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!organization) return;
 
-        try {
-            const branchesRef = ref(db, `atithi-connect/Orgs/${organization.id}/branches`);
-            const newBranchRef = push(branchesRef); // generates new unique key
-            const branchId = newBranchRef.key;
+    try {
+        const branchesRef = ref(db, `atithi-connect/Orgs/${organization.id}/branches`);
+        const newBranchRef = push(branchesRef); // generates new unique key
+        const branchId = newBranchRef.key;
 
-            // Save full branch info to org path
-            const fullBranchData = {
-                branchId,
-                ...formData,
-                createdAt: Date.now(),
-            };
-            await set(newBranchRef, fullBranchData);
+        // Save full branch info to org path with orgId included
+        const fullBranchData = {
+            branchId,
+            orgId: organization.id, // <-- Include orgId here
+            ...formData,
+            createdAt: Date.now(),
+        };
+        await set(newBranchRef, fullBranchData);
 
-            // Save minimal info to users/{emailKey}
-            const emailKey = formData.email.replace(/\./g, '_');
-            const userRef = ref(db, `users/${emailKey}`);
-            const userData = {
-                email: formData.email,
-                branchId,
-                managerName: formData.managerName,
-                role: 'Branch'
-            };
-            await set(userRef, userData);
+        // Save minimal info to users/{emailKey}
+        const emailKey = formData.email.replace(/\./g, '_');
+        const userRef = ref(db, `users/${emailKey}`);
+        const userData = {
+            email: formData.email,
+            branchId,
+            orgId: organization.id, // <-- Include orgId here as well
+            managerName: formData.managerName,
+            role: 'Branch'
+        };
+        await set(userRef, userData);
 
-            // Refresh branch list
-            const snapshot = await get(branchesRef);
-            if (snapshot.exists()) {
-                const data = snapshot.val();
-                const updatedBranches = Object.entries(data).map(([id, val]) => ({
-                    id,
-                    ...val,
-                    createdAt: val.createdAt ? new Date(val.createdAt).toLocaleString() : ''
-                })).sort((a, b) => b.createdAt - a.createdAt);
-                setBranches(updatedBranches);
-            } else {
-                setBranches([]);
-            }
-
-            // Reset form
-            setFormData({
-                branchName: '',
-                managerName: '',
-                email: '',
-                phone: '',
-                whatsapp: '',
-                address: '',
-                isEnabled: true
-            });
-            setShowForm(false);
-            setError('');
-        } catch (error) {
-            console.error('Error adding branch:', error);
-            setError('Failed to add branch. Please try again.');
+        // Refresh branch list
+        const snapshot = await get(branchesRef);
+        if (snapshot.exists()) {
+            const data = snapshot.val();
+            const updatedBranches = Object.entries(data).map(([id, val]) => ({
+                id,
+                ...val,
+                createdAt: val.createdAt ? new Date(val.createdAt).toLocaleString() : ''
+            })).sort((a, b) => b.createdAt - a.createdAt);
+            setBranches(updatedBranches);
+        } else {
+            setBranches([]);
         }
-    };
+
+        // Reset form
+        setFormData({
+            branchName: '',
+            managerName: '',
+            email: '',
+            phone: '',
+            whatsapp: '',
+            address: '',
+            isEnabled: true
+        });
+        setShowForm(false);
+        setError('');
+    } catch (error) {
+        console.error('Error adding branch:', error);
+        setError('Failed to add branch. Please try again.');
+    }
+};
+
 
     if (!organization) {
         return (

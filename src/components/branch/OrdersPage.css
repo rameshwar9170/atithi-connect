@@ -1,0 +1,581 @@
+/* Orders Page Container */
+.orders-page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: #f8f9fa;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Restaurant Tables Section */
+.restaurant-tables-section {
+  background: white;
+  padding: 24px;
+  border-bottom: 1px solid #e9ecef;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+}
+
+.restaurant-tables-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 20px 0;
+}
+
+.restaurant-tables-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+  max-width: 100%;
+}
+
+.restaurant-table-card {
+  background: white;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.restaurant-table-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.restaurant-table-card.table-available {
+  border-color: #28a745;
+  background: #f8fff9;
+}
+
+.restaurant-table-card.table-booked {
+  border-color: #dc3545;
+  background: #fff8f8;
+}
+
+.restaurant-table-card.table-selected {
+  border-color: #007bff;
+  background: #f0f8ff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+.restaurant-table-number {
+  font-size: 18px;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 8px;
+}
+
+.restaurant-table-status {
+  font-size: 14px;
+  font-weight: 500;
+  padding: 4px 12px;
+  border-radius: 20px;
+  display: inline-block;
+}
+
+.table-available .restaurant-table-status {
+  color: #28a745;
+  background: #d4edda;
+}
+
+.table-booked .restaurant-table-status {
+  color: #dc3545;
+  background: #f8d7da;
+}
+
+/* Main Content Area */
+.orders-main-content {
+  flex: 1;
+  padding: 24px;
+  background: white;
+  margin: 16px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+/* Selected Table Section */
+.selected-table-section {
+  margin-bottom: 24px;
+}
+
+.selected-table-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #212529;
+  margin: 0 0 16px 0;
+}
+
+.menu-search-container {
+  max-width: 400px;
+}
+
+.menu-search-input {
+  width: 100%;
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  transition: border-color 0.2s ease;
+}
+
+.menu-search-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Search Results */
+.menu-search-results {
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.menu-search-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  border-bottom: 1px solid #e9ecef;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.menu-search-item:last-child {
+  border-bottom: none;
+}
+
+.menu-search-item:hover {
+  background: #e9ecef;
+}
+
+.menu-search-item-name {
+  font-weight: 500;
+  color: #212529;
+}
+
+.menu-search-item-price {
+  font-weight: 600;
+  color: #007bff;
+}
+
+/* Order Items Section */
+.order-items-section {
+  margin-bottom: 24px;
+}
+
+.order-items-table {
+  background: white;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #e9ecef;
+}
+
+.order-table-header {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.8fr 1fr 0.5fr; /* Increased space for Quantity */
+  gap: 16px;
+  padding: 16px;
+  background: #f8f9fa;
+  font-weight: 600;
+  color: #495057;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.order-table-row {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1.8fr 1fr 0.5fr; /* Match header */
+  gap: 16px;
+  padding: 16px;
+  border-bottom: 1px solid #f1f3f4;
+  align-items: center;
+}
+
+
+.order-table-row:last-child {
+  border-bottom: none;
+}
+
+.order-row-item {
+  font-weight: 500;
+  color: #212529;
+}
+
+.order-row-price,
+.order-row-total {
+  font-weight: 600;
+  color: #495057;
+}
+
+.quantity-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.quantity-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #e9ecef;
+  background: white;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.quantity-value {
+  width: 24px;
+  text-align: center;
+  font-weight: 600;
+  color: #212529;
+}
+
+
+.quantity-btn:hover {
+  background: #f8f9fa;
+  border-color: #007bff;
+}
+
+.quantity-decrease {
+  color: #dc3545;
+}
+
+.quantity-increase {
+  color: #28a745;
+}
+
+.quantity-value {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 600;
+  color: #212529;
+}
+
+.remove-item-btn {
+  width: 32px;
+  height: 32px;
+  border: 1px solid #dc3545;
+  background: white;
+  color: #dc3545;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 18px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.remove-item-btn:hover {
+  background: #dc3545;
+  color: white;
+}
+
+/* Empty States */
+.empty-order-state,
+.no-table-selected-state {
+  text-align: center;
+  padding: 48px 24px;
+  color: #6c757d;
+}
+
+.empty-order-icon,
+.no-table-icon {
+  font-size: 48px;
+  margin-bottom: 16px;
+}
+
+.no-table-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #495057;
+  margin: 0 0 8px 0;
+}
+
+.empty-order-message,
+.no-table-message {
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Clear Orders Section */
+.clear-orders-section {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.clear-all-orders-btn {
+  padding: 12px 24px;
+  background: #dc3545;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.clear-all-orders-btn:hover {
+  background: #c82333;
+}
+
+/* Footer */
+.orders-page-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24px;
+  background: white;
+  border-top: 1px solid #e9ecef;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.total-amount-display {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.total-label-text {
+  font-size: 18px;
+  font-weight: 500;
+  color: #495057;
+}
+
+.total-amount-value {
+  font-size: 24px;
+  font-weight: 700;
+  color: #007bff;
+}
+
+.generate-bill-btn {
+  padding: 16px 32px;
+  background: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.generate-bill-btn:hover:not(.generate-bill-disabled) {
+  background: #0056b3;
+  transform: translateY(-1px);
+}
+
+.generate-bill-btn.generate-bill-disabled {
+  background: #6c757d;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+/* Bill Modal Overlay */
+.bill-generation-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+/* Modal Container */
+.bill-modal-content {
+  background: white;
+  border-radius: 12px;
+  padding: 32px;
+  width: 100%;
+  max-width: 500px;
+  margin: 16px auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+}
+
+/* Form Layout */
+.bill-customer-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Input Group */
+.bill-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Label Styling */
+.bill-form-label {
+  font-weight: 500;
+  color: #495057;
+}
+
+/* Input Styling (Shared) */
+.bill-form-input {
+  padding: 12px 16px;
+  border: 2px solid #e9ecef;
+  border-radius: 8px;
+  font-size: 16px;
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+  appearance: none;
+}
+.bill-form-input-phone {
+  font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease;
+}
+
+/* Focus Style */
+.bill-form-input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Action Buttons */
+.bill-form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+
+.bill-cancel-btn,
+.bill-submit-btn {
+  padding: 12px 24px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.bill-cancel-btn {
+  background: #6c757d;
+  color: white;
+}
+
+.bill-cancel-btn:hover {
+  background: #545b62;
+}
+
+.bill-submit-btn {
+  background: #007bff;
+  color: white;
+}
+
+.bill-submit-btn:hover {
+  background: #0056b3;
+}
+.bill-skip-btn {
+  background-color: #ff9800; /* orange tone to differentiate */
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  font-size: 1rem;
+  font-weight: 600;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.bill-skip-btn:hover {
+  background-color: #fb8c00; /* darker orange on hover */
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .restaurant-tables-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 12px;
+  }
+  
+  .orders-main-content {
+    margin: 12px;
+    padding: 16px;
+  }
+  
+  .order-table-header,
+  .order-table-row {
+    grid-template-columns: 2fr 1fr 1.2fr 1fr 0.8fr;
+    gap: 8px;
+    padding: 12px;
+    font-size: 14px;
+  }
+  
+  .orders-page-footer {
+    flex-direction: column;
+    gap: 16px;
+    text-align: center;
+  }
+  
+  .generate-bill-btn {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .restaurant-tables-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .order-table-header,
+  .order-table-row {
+    display: grid; /* Ensure it's still a grid */
+    grid-template-columns: 1fr 1fr; /* Adjust columns to avoid vertical stacking */
+    gap: 8px; /* Adjust gap */
+    font-size: 13px;
+    padding: 8px;
+  }
+
+  .order-table-header > div,
+  .order-table-row > div {
+    padding: 4px 0;
+    word-break: break-word;
+  }
+
+  .quantity-controls {
+    justify-content: flex-start;
+  }
+
+  .bill-modal-content {
+    margin: 8px;
+    padding: 24px;
+  }
+
+  .bill-form-actions {
+    flex-direction: column;
+  }
+
+  .bill-cancel-btn,
+  .bill-submit-btn {
+    width: 100%;
+  }
+}

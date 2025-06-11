@@ -29,7 +29,7 @@ function BranchHome() {
   return (
     <div className="homepage-container">
       {/* Welcome Banner */}
-      <div className="welcome-banner">
+      {/* <div className="welcome-banner">
         <div className="welcome-text">
           <h1>Welcome back, Branch Admin</h1>
           <p>Manage your daily branch operations from here.</p>
@@ -42,7 +42,7 @@ function BranchHome() {
             day: 'numeric'
           })}
         </div>
-      </div>
+      </div> */}
 
       {/* Services Section */}
       <div className="services-section">
