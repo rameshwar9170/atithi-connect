@@ -11,6 +11,7 @@ import {
 } from 'react-icons/fa';
 import './BranchHome.css'; // Ensure you have the correct CSS file for styling
 import { useNavigate } from 'react-router-dom';
+import PaymentReports from './PaymentReports';
 
 function BranchHome() {
   const navigate = useNavigate();
@@ -28,6 +29,8 @@ function BranchHome() {
 
   return (
     <div className="homepage-container">
+
+      <PaymentReports />
       {/* Welcome Banner */}
       {/* <div className="welcome-banner">
         <div className="welcome-text">

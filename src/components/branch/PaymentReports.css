@@ -1,0 +1,454 @@
+/* Enhanced Stats Row - No Horizontal Scroll */
+
+.stats-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.stat-card {
+  background: white;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.stat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 16px;
+}
+
+.stat-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.stat-label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: #64748b;
+  margin: 0 0 8px 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  font-size: clamp(1.5rem, 3vw, 1.75rem);
+  font-weight: 700;
+  color: #1e293b;
+  margin: 0 0 8px 0;
+  line-height: 1.2;
+  word-break: break-word;
+}
+
+.trend {
+  font-size: 0.75rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 12px;
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.trend.positive {
+  color: #16a34a;
+  background: linear-gradient(135deg, #dcfce7, #bbf7d0);
+}
+
+.trend.negative {
+  color: #dc2626;
+  background: linear-gradient(135deg, #fee2e2, #fecaca);
+}
+
+.chart-container {
+  margin-top: 16px;
+  height: 60px;
+  width: 100%;
+  overflow: hidden;
+}
+
+/* Enhanced Charts Grid */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+  gap: 24px;
+  margin-bottom: 24px;
+  width: 100%;
+}
+
+.chart-card {
+  background: white;
+  border-radius: 12px;
+  padding: 24px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.chart-card.full-width {
+  grid-column: 1 / -1;
+}
+
+.chart-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 20px 0;
+  position: relative;
+}
+
+.chart-title::after {
+  content: '';
+  position: absolute;
+  bottom: -8px;
+  left: 0;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+  border-radius: 2px;
+}
+
+/* Enhanced Pie Chart Legend */
+.pie-legend {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #475569;
+  font-weight: 500;
+}
+
+.legend-color {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced Customer List */
+.customer-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.customer-item {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px;
+  background: #f8fafc;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.customer-item:hover {
+  background: #f1f5f9;
+  transform: translateX(4px);
+}
+
+.customer-rank {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #1e293b, #475569);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.875rem;
+  flex-shrink: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.customer-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.customer-name {
+  font-weight: 600;
+  color: #1e293b;
+  margin: 0 0 4px 0;
+  font-size: 0.95rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.customer-spending {
+  color: #64748b;
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.customer-bar {
+  width: 120px;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.customer-bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.8s ease;
+  background: linear-gradient(90deg, #6366f1, #8b5cf6);
+}
+
+/* Card Color Enhancements */
+.card-total-revenue {
+  border-top: 4px solid #6366f1;
+  background: linear-gradient(135deg, white, #f8faff);
+}
+
+.card-total-orders {
+  border-top: 4px solid #ec4899;
+  background: linear-gradient(135deg, white, #fef7ff);
+}
+
+.card-avg-bill {
+  border-top: 4px solid #14b8a6;
+  background: linear-gradient(135deg, white, #f0fdfa);
+}
+
+.card-unique-customers {
+  border-top: 4px solid #f97316;
+  background: linear-gradient(135deg, white, #fff7ed);
+}
+
+.report-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+.report-table th, .report-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid #e2e8f0;
+}
+.top-items-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 1rem;
+}
+.top-items-list li {
+  padding: 6px 0;
+  font-weight: 500;
+}
+
+.card-top-item {
+  border-left: 4px solid #0ea5e9;
+  background: linear-gradient(135deg, white, #eff6ff);
+}
+
+.card-most-ordered-table {
+  border-left: 4px solid #22c55e;
+  background: linear-gradient(135deg, white, #f0fdf4);
+}
+
+/* Enhanced Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.stat-card, .chart-card {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.customer-item {
+  animation: slideInRight 0.4s ease forwards;
+}
+
+.stat-card:nth-child(1) { animation-delay: 0.1s; }
+.stat-card:nth-child(2) { animation-delay: 0.2s; }
+.stat-card:nth-child(3) { animation-delay: 0.3s; }
+.stat-card:nth-child(4) { animation-delay: 0.4s; }
+
+.customer-item:nth-child(1) { animation-delay: 0.1s; }
+.customer-item:nth-child(2) { animation-delay: 0.2s; }
+.customer-item:nth-child(3) { animation-delay: 0.3s; }
+.customer-item:nth-child(4) { animation-delay: 0.4s; }
+.customer-item:nth-child(5) { animation-delay: 0.5s; }
+
+/* Responsive Design Enhancements */
+@media (max-width: 1200px) {
+  .stats-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .report-wrapper {
+  }
+  
+  .stats-row {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .charts-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  
+  .chart-card, .stat-card {
+    padding: 16px;
+  }
+  
+  .customer-item {
+    padding: 12px;
+    gap: 12px;
+  }
+  
+  .customer-bar {
+    width: 80px;
+  }
+}
+
+@media (max-width: 640px) {
+  .report-wrapper {
+  }
+  
+  .pie-legend {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .customer-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  
+  .customer-bar {
+    width: 100%;
+    align-self: stretch;
+  }
+  
+  .stats-row {
+    gap: 12px;
+  }
+  
+  .charts-grid {
+    gap: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .report-wrapper {
+  }
+  
+  .chart-card, .stat-card {
+    padding: 12px;
+  }
+  
+  .customer-rank {
+    width: 28px;
+    height: 28px;
+    font-size: 0.75rem;
+  }
+  
+  .customer-item {
+    padding: 10px;
+  }
+}
+
+/* Prevent horizontal overflow globally */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  overflow-x: hidden;
+}
+
+.report-wrapper * {
+  max-width: 100%;
+}
+
+/* Utility classes for better spacing */
+.mb-0 { margin-bottom: 0; }
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+
+/* Loading states */
+.loading {
+  position: relative;
+  overflow: hidden;
+}
+
+.loading::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { left: -100%; }
+  100% { left: 100%; }
+}
+

@@ -69,8 +69,8 @@ function OrdersPage() {
     setResults(
       query
         ? menuItems.filter(item =>
-            item.itemName.toLowerCase().includes(query.toLowerCase())
-          )
+          item.itemName.toLowerCase().includes(query.toLowerCase())
+        )
         : []
     );
   }, [query, menuItems]);
@@ -309,14 +309,14 @@ function OrdersPage() {
             </div>
           )}
         </div>
-        
+
         {/* Search Results */}
         {results.length > 0 && (
           <div className="menu-search-results">
             {results.map(item => (
-              <div 
-                key={item.menuId} 
-                className="menu-search-item" 
+              <div
+                key={item.menuId}
+                className="menu-search-item"
                 onClick={() => handleAdd(item)}
               >
                 <span className="menu-search-item-name">{item.itemName}</span>
@@ -344,14 +344,14 @@ function OrdersPage() {
                     <div className="order-row-price">₹{item.itemPrice}</div>
                     <div className="order-row-quantity">
                       <div className="quantity-controls">
-                        <button 
+                        <button
                           className="quantity-btn quantity-decrease"
                           onClick={() => updateQuantity(item.menuId, item.quantity - 1)}
                         >
                           −
                         </button>
                         <span className="quantity-value">{item.quantity}</span>
-                        <button 
+                        <button
                           className="quantity-btn quantity-increase"
                           onClick={() => updateQuantity(item.menuId, item.quantity + 1)}
                         >
@@ -361,8 +361,8 @@ function OrdersPage() {
                     </div>
                     <div className="order-row-total">₹{item.subtotal}</div>
                     <div className="order-row-action">
-                      <button 
-                        onClick={() => removeItem(item.menuId)} 
+                      <button
+                        onClick={() => removeItem(item.menuId)}
                         className="remove-item-btn"
                       >
                         ×
@@ -389,7 +389,7 @@ function OrdersPage() {
         {/* Clear All Orders Button */}
         {selectedTable && getCurrentOrders().length > 0 && (
           <div className="clear-orders-section">
-            <button 
+            <button
               onClick={clearTableOrders}
               className="clear-all-orders-btn"
             >
@@ -414,86 +414,115 @@ function OrdersPage() {
         </button>
       </div>
 
-  {/* Bill Modal */}
-{showBillForm && (
-  <div className="bill-generation-modal">
-    <div className="bill-modal-content">
-      <h3 className="bill-modal-title">Customer Details</h3>
-      <form onSubmit={handleBillSubmit} className="bill-customer-form">
-        <div className="bill-form-group">
-          <label className="bill-form-label">Customer Name *</label>
-          <input
-            type="text"
-            value={customer.name}
-            onChange={e => setCustomer({ ...customer, name: e.target.value })}
-            placeholder="Enter customer name"
-            className="bill-form-input"
-            required
-          />
+      {/* Bill Modal */}
+      {showBillForm && (
+        <div className="bill-generation-modal">
+          <div className="bill-modal-content">
+            <h3 className="bill-modal-title">Customer Details</h3>
+            <form onSubmit={handleBillSubmit} className="bill-customer-form">
+              <div className="bill-form-group">
+                <label className="bill-form-label">Customer Name *</label>
+                <input
+                  type="text"
+                  value={customer.name}
+                  onChange={e => setCustomer({ ...customer, name: e.target.value })}
+                  placeholder="Enter customer name"
+                  className="bill-form-input"
+                  required
+                />
+              </div>
+              <div className="bill-form-group">
+                <label className="bill-form-label">Phone Number *</label>
+                <input
+                  type="tel"
+                  value={customer.phone}
+                  onChange={e => setCustomer({ ...customer, phone: e.target.value })}
+                  placeholder="Enter phone number"
+                  className="bill-form-input-phone"
+                  required
+                />
+              </div>
+              <div className="bill-form-group">
+                <label className="bill-form-label">Payment Mode *</label>
+                <div className="payment-mode-options">
+                  <label className="payment-option">
+                    <input
+                      type="radio"
+                      name="paymentMode"
+                      value="Online"
+                      checked={customer.paymentMode === 'Online'}
+                      onChange={e => setCustomer({ ...customer, paymentMode: e.target.value })}
+                      required
+                    />
+                    Online
+                  </label>
+                  <label className="payment-option">
+                    <input
+                      type="radio"
+                      name="paymentMode"
+                      value="Offline"
+                      checked={customer.paymentMode === 'Offline'}
+                      onChange={e => setCustomer({ ...customer, paymentMode: e.target.value })}
+                      required
+                    />
+                    Offline
+                  </label>
+                </div>
+              </div>
+
+              <div className="bill-form-actions">
+                <button
+                  type="button"
+                  className="bill-cancel-btn"
+                  onClick={() => setShowBillForm(false)}
+                >
+                  Cancel
+                </button>
+                <button type="submit" className="bill-submit-btn">
+                  Save Bill
+                </button>
+                <button
+                  type="button"
+                  className="bill-skip-btn"
+                  onClick={async () => {
+                    try {
+                      const billRef = ref(db, `atithi-connect/Branches/${branchId}/Bills`);
+                      const newBill = push(billRef);
+
+                      await set(newBill, {
+                        billId: newBill.key,
+                        table: selectedTable.tableNumber,
+                        customer: { name: "NA", phone: "NA", paymentMode: "NA" },
+
+                        items: tableOrders[selectedTable.tableId],
+                        total,
+                        createdAt: Date.now(),
+                      });
+
+                      setTableOrders(prev => ({
+                        ...prev,
+                        [selectedTable.tableId]: []
+                      }));
+
+                      await updateTableStatus(selectedTable, 'available');
+
+                      setCustomer({ name: '', phone: '' });
+                      setShowBillForm(false);
+                    } catch (error) {
+                      console.error('Error saving bill:', error);
+                      alert('Error saving bill. Please try again.');
+                    }
+                  }}
+                >
+                  Skip
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
-        <div className="bill-form-group">
-          <label className="bill-form-label">Phone Number *</label>
-          <input
-            type="tel"
-            value={customer.phone}
-            onChange={e => setCustomer({ ...customer, phone: e.target.value })}
-            placeholder="Enter phone number"
-            className="bill-form-input-phone"
-            required
-          />
-        </div>
-        <div className="bill-form-actions">
-          <button
-            type="button"
-            className="bill-cancel-btn"
-            onClick={() => setShowBillForm(false)}
-          >
-            Cancel
-          </button>
-          <button type="submit" className="bill-submit-btn">
-            Save Bill
-          </button>
-          <button
-            type="button"
-            className="bill-skip-btn"
-            onClick={async () => {
-              try {
-                const billRef = ref(db, `atithi-connect/Branches/${branchId}/Bills`);
-                const newBill = push(billRef);
+      )}
 
-                await set(newBill, {
-                  billId: newBill.key,
-                  table: selectedTable.tableNumber,
-                  customer: { name: "NA", phone: "NA" },
-                  items: tableOrders[selectedTable.tableId],
-                  total,
-                  createdAt: Date.now(),
-                });
-
-                setTableOrders(prev => ({
-                  ...prev,
-                  [selectedTable.tableId]: []
-                }));
-
-                await updateTableStatus(selectedTable, 'available');
-
-                setCustomer({ name: '', phone: '' });
-                setShowBillForm(false);
-              } catch (error) {
-                console.error('Error saving bill:', error);
-                alert('Error saving bill. Please try again.');
-              }
-            }}
-          >
-            Skip
-          </button>
-        </div>
-      </form>
     </div>
-  </div>
-)}
-
-    </div>  
   );
 }
 

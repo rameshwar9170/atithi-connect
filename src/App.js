@@ -23,6 +23,7 @@ import ReportsPage from './components/branch/ReportsPage';
 import BillingPage from './components/branch/BillingPage';
 import NotificationsPage from './components/branch/NotificationsPage';
 import SettingsPage from './components/branch/SettingsPage';
+import DetailedReport from './components/branch/DetailedReport';
 
 function App() {
   return (
@@ -62,28 +63,39 @@ function App() {
         </Route>
 
         {/* ✅ Branch Dashboard Routes */}
-     <Route
-  path="/branch-dashboard"
-  element={
-    <PrivateRoute>
-      <BranchDashboard />
-    </PrivateRoute>
-  }
->
-  <Route index element={<BranchHome />} />
-  <Route path="orders" element={<OrdersPage />} />
-  <Route path="staff" element={<StaffPage />} />
-  <Route path="menu" element={<MenuPage />} />
-  <Route path="payments" element={<PaymentsPage />} />
-  <Route path="reports" element={<ReportsPage />} />
-  <Route path="billing" element={<BillingPage />} />
-  <Route path="notifications" element={<NotificationsPage />} />
-  <Route path="settings" element={<SettingsPage />} />
-</Route>
+        <Route
+          path="/branch-dashboard"
+          element={
+            <PrivateRoute>
+              <BranchDashboard />
+            </PrivateRoute>
+          }
+        >
+          <Route index element={<BranchHome />} />
+          <Route path="orders" element={<OrdersPage />} />
+          <Route path="staff" element={<StaffPage />} />
+          <Route path="menu" element={<MenuPage />} />
+          <Route path="payments" element={<PaymentsPage />} />
+          <Route path="reports" element={<ReportsPage />} />
+          <Route path="billing" element={<BillingPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
+          <Route path="settings" element={<SettingsPage />} />
+
+          {/* ✅ Moved Detailed Report Routes inside branch-dashboard */}
+          <Route path="detailed-report">
+            <Route path="revenue" element={<DetailedReport metric="revenue" />} />
+            <Route path="orders" element={<DetailedReport metric="orders" />} />
+            <Route path="customers" element={<DetailedReport metric="customers" />} />
+          </Route>
+
+        </Route>
+
 
 
         {/* ✅ Fallback Route */}
         <Route path="*" element={<Navigate to="/" replace />} />
+
+
       </Routes>
     </BrowserRouter>
   );
