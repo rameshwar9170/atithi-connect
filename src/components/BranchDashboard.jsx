@@ -19,6 +19,7 @@ import {
   FaMoneyBillWave,
   FaChartPie,
   FaFileInvoiceDollar,
+  FaBed,
   FaListAlt
 } from 'react-icons/fa';
 import { ref, get } from 'firebase/database';
@@ -66,6 +67,8 @@ function BranchDashboard() {
     const pathMap = {
       '/': 'Branch Dashboard',
       '/orders': 'Tables & Orders',
+      '/rooms': 'Rooms Management',
+      '/inventory': 'Inventory Management',
       '/staff': 'Staff Management',
       '/menu': 'Menu Management',
       '/payments': 'Payments',
@@ -89,6 +92,18 @@ function BranchDashboard() {
     icon: FaClipboardList,
     label: 'Tables & Orders',
     isActive: currentPath === '/branch-dashboard/orders',
+  },
+  {
+    path: '/branch-dashboard/rooms',
+    icon: FaBed,
+    label: 'Rooms',
+    isActive: currentPath === '/branch-dashboard/rooms',
+  },
+  {
+    path: '/branch-dashboard/inventory',
+    icon: FaListAlt,
+    label: 'Inventory',
+    isActive: currentPath === '/branch-dashboard/inventory',
   },
   {
     path: '/branch-dashboard/staff',

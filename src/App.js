@@ -24,6 +24,9 @@ import BillingPage from './components/branch/BillingPage';
 import NotificationsPage from './components/branch/NotificationsPage';
 import SettingsPage from './components/branch/SettingsPage';
 import DetailedReport from './components/branch/DetailedReport';
+import RevenueDetails from './components/branch/RevenueDetails';
+import RoomsPage from './components/branch/RoomsPage';
+import InventoryManagement from './components/branch/InventoryManagement';
 
 function App() {
   return (
@@ -73,6 +76,8 @@ function App() {
         >
           <Route index element={<BranchHome />} />
           <Route path="orders" element={<OrdersPage />} />
+          <Route path="rooms" element={<RoomsPage />} />
+          <Route path="inventory" element={<InventoryManagement />} />
           <Route path="staff" element={<StaffPage />} />
           <Route path="menu" element={<MenuPage />} />
           <Route path="payments" element={<PaymentsPage />} />
@@ -83,7 +88,7 @@ function App() {
 
           {/* ✅ Moved Detailed Report Routes inside branch-dashboard */}
           <Route path="detailed-report">
-            <Route path="revenue" element={<DetailedReport metric="revenue" />} />
+            <Route path="revenue" element={<RevenueDetails metric="revenue" />} />
             <Route path="orders" element={<DetailedReport metric="orders" />} />
             <Route path="customers" element={<DetailedReport metric="customers" />} />
           </Route>

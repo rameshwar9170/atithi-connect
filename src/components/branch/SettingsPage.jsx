@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { ref, set, get, push } from 'firebase/database';
 import { db } from '../../firebase/config';
-import { FaUtensils, FaClipboardList } from 'react-icons/fa';
+import { FaUtensils, FaClipboardList, FaBed } from 'react-icons/fa';
 import './SettingsPage.css';
 
 function SettingsPage() {
   const branchId = localStorage.getItem('branchId');
-  const [view, setView] = useState(null); // "table" or "category"
+  const [view, setView] = useState(null);
 
   const [existingTableNumbers, setExistingTableNumbers] = useState([]);
   const [selectedTableNumber, setSelectedTableNumber] = useState('');
@@ -15,12 +15,17 @@ function SettingsPage() {
   const [categoryName, setCategoryName] = useState('');
   const [existingCategories, setExistingCategories] = useState([]);
 
+  const [existingRoomNumbers, setExistingRoomNumbers] = useState([]);
+  const [selectedRoomNumber, setSelectedRoomNumber] = useState('');
+  const [roomType, setRoomType] = useState('');
+  const [pricePerDay, setPricePerDay] = useState('');
+
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
 
-  // Load existing tables
   useEffect(() => {
     if (!branchId) return;
+
     const tableRef = ref(db, `atithi-connect/Branches/${branchId}/tables`);
     get(tableRef).then(snapshot => {
       if (snapshot.exists()) {
@@ -35,9 +40,16 @@ function SettingsPage() {
         setExistingCategories(Object.values(snapshot.val()));
       }
     });
+
+    const roomRef = ref(db, `atithi-connect/Branches/${branchId}/rooms`);
+    get(roomRef).then(snapshot => {
+      if (snapshot.exists()) {
+        const roomNums = Object.keys(snapshot.val()).map(num => parseInt(num));
+        setExistingRoomNumbers(roomNums);
+      }
+    });
   }, [branchId]);
 
-  // Auto-select table number
   useEffect(() => {
     for (let i = 1; i <= 100; i++) {
       if (!existingTableNumbers.includes(i)) {
@@ -47,18 +59,25 @@ function SettingsPage() {
     }
   }, [existingTableNumbers]);
 
+  useEffect(() => {
+    for (let i = 1; i <= 100; i++) {
+      if (!existingRoomNumbers.includes(i)) {
+        setSelectedRoomNumber(i.toString());
+        break;
+      }
+    }
+  }, [existingRoomNumbers]);
+
   const handleAddTable = async (e) => {
     e.preventDefault();
     setError('');
     setSuccess('');
 
     const total = parseInt(totalSeats);
-
     if (!selectedTableNumber || isNaN(total) || total <= 0) {
       setError('Please provide valid table number and seats.');
       return;
     }
-
     if (existingTableNumbers.includes(parseInt(selectedTableNumber))) {
       setError(`Table number ${selectedTableNumber} already exists.`);
       return;
@@ -105,28 +124,69 @@ function SettingsPage() {
     }
   };
 
+  const handleAddRoom = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+
+    if (!selectedRoomNumber || !roomType.trim() || isNaN(pricePerDay) || parseFloat(pricePerDay) <= 0) {
+      setError('Please provide valid room number, type, and price.');
+      return;
+    }
+    if (existingRoomNumbers.includes(parseInt(selectedRoomNumber))) {
+      setError(`Room number ${selectedRoomNumber} already exists.`);
+      return;
+    }
+
+    try {
+      const roomRef = ref(db, `atithi-connect/Branches/${branchId}/rooms/${selectedRoomNumber}`);
+      await set(roomRef, {
+        roomId: selectedRoomNumber,
+        roomNumber: selectedRoomNumber,
+        roomType: roomType.trim(),
+        pricePerDay: parseFloat(pricePerDay),
+        status: 'available',
+        createdAt: new Date().toISOString()
+      });
+      setSuccess('✅ Room added successfully!');
+      setRoomType('');
+      setPricePerDay('');
+      setExistingRoomNumbers(prev => [...prev, parseInt(selectedRoomNumber)]);
+    } catch (err) {
+      setError('Failed to add room.');
+    }
+  };
+
   return (
     <div className="settings-container">
       <h2>Branch Settings</h2>
       <p>Manage your branch settings like tables and menu categories</p>
 
-   <div className="settings-buttons">
-  <button
-    onClick={() => setView('table')}
-    className={`settings-option ${view === 'table' ? 'active' : ''}`}
-  >
-    <FaUtensils style={{ marginRight: '8px' }} />
-    Add Table
-  </button>
-  
-  <button
-    onClick={() => setView('category')}
-    className={`settings-option ${view === 'category' ? 'active' : ''}`}
-  >
-    <FaClipboardList style={{ marginRight: '8px' }} />
-    Add Menu Category
-  </button>
-</div>
+      <div className="settings-buttons">
+        <button
+          onClick={() => setView('table')}
+          className={`settings-option ${view === 'table' ? 'active' : ''}`}
+        >
+          <FaUtensils style={{ marginRight: '8px' }} />
+          Add Table
+        </button>
+
+        <button
+          onClick={() => setView('category')}
+          className={`settings-option ${view === 'category' ? 'active' : ''}`}
+        >
+          <FaClipboardList style={{ marginRight: '8px' }} />
+          Add Menu Category
+        </button>
+
+        <button
+          onClick={() => setView('room')}
+          className={`settings-option ${view === 'room' ? 'active' : ''}`}
+        >
+          <FaBed style={{ marginRight: '8px' }} />
+          Add Room
+        </button>
+      </div>
 
       {view === 'table' && (
         <form className="settings-form" onSubmit={handleAddTable}>
@@ -171,6 +231,49 @@ function SettingsPage() {
             />
           </div>
           <button className="primary-button" type="submit">Add Category</button>
+        </form>
+      )}
+
+      {view === 'room' && (
+        <form className="settings-form" onSubmit={handleAddRoom}>
+          <div className="form-group">
+            <label>Room Number</label>
+            <select value={selectedRoomNumber} onChange={e => setSelectedRoomNumber(e.target.value)} required>
+              {[...Array(100)].map((_, i) => {
+                const num = i + 1;
+                return (
+                  <option key={num} value={num} disabled={existingRoomNumbers.includes(num)}>
+                    {num}
+                  </option>
+                );
+              })}
+            </select>
+          </div>
+
+          <div className="form-group">
+            <label>Room Type</label>
+            <input
+              type="text"
+              value={roomType}
+              onChange={(e) => setRoomType(e.target.value)}
+              placeholder="AC / Non-AC / Deluxe"
+              required
+            />
+          </div>
+
+          <div className="form-group">
+            <label>Price Per Day (₹)</label>
+            <input
+              type="number"
+              value={pricePerDay}
+              onChange={(e) => setPricePerDay(e.target.value)}
+              min="0"
+              step="0.01"
+              required
+            />
+          </div>
+
+          <button className="primary-button" type="submit">Add Room</button>
         </form>
       )}
 

@@ -1,0 +1,245 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+    --RevenueDetails-primary: #1e3a8a;
+    --RevenueDetails-secondary: #f1f5f9;
+    --RevenueDetails-accent: #2dd4bf;
+    --RevenueDetails-text: #111827;
+    --RevenueDetails-border: #e2e8f0;
+    --RevenueDetails-error: #b91c1c;
+    --RevenueDetails-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    --RevenueDetails-transition: all 0.3s ease;
+    --RevenueDetails-gradient: linear-gradient(135deg, #1e3a8a, #2dd4bf);
+}
+
+.RevenueDetails-container {
+    max-width: 1400px;
+    margin: 2rem auto;
+    padding: 2rem;
+    background-color: #ffffff;
+    border-radius: 16px;
+    box-shadow: var(--RevenueDetails-shadow);
+    font-family: 'Inter', sans-serif;
+}
+
+.RevenueDetails-title {
+    font-size: 2.25rem;
+    font-weight: 700;
+    color: var(--RevenueDetails-primary);
+    text-align: center;
+    margin-bottom: 2rem;
+    background: var(--RevenueDetails-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.RevenueDetails-error {
+    background-color: #fef2f2;
+    color: var(--RevenueDetails-error);
+    padding: 1rem;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-weight: 500;
+}
+
+.RevenueDetails-filter-bar {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--RevenueDetails-secondary);
+    border-radius: 12px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.RevenueDetails-filter-input {
+    padding: 0.75rem;
+    border: 1px solid var(--RevenueDetails-border);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--RevenueDetails-text);
+    background-color: #ffffff;
+    transition: var(--RevenueDetails-transition);
+}
+
+.RevenueDetails-filter-input:focus {
+    outline: none;
+    border-color: var(--RevenueDetails-accent);
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
+}
+
+.RevenueDetails-export-buttons {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.RevenueDetails-export-button {
+    padding: 0.75rem 1.25rem;
+    background-color: var(--RevenueDetails-accent);
+    color: #ffffff;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--RevenueDetails-transition);
+}
+
+.RevenueDetails-export-button:hover {
+    background-color: #26a69a;
+    transform: translateY(-2px);
+}
+
+.RevenueDetails-export-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.3);
+}
+
+.RevenueDetails-summary {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background-color: var(--RevenueDetails-secondary);
+    border-radius: 12px;
+    box-shadow: var(--RevenueDetails-shadow);
+}
+
+.RevenueDetails-summary p {
+    margin: 0;
+    font-size: 1.1rem;
+    color: var(--RevenueDetails-text);
+    font-weight: 500;
+}
+
+.RevenueDetails-summary span {
+    font-weight: 700;
+    color: var(--RevenueDetails-primary);
+}
+
+.RevenueDetails-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    color: var(--RevenueDetails-text);
+    padding: 2rem;
+}
+
+.RevenueDetails-spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 4px solid var(--RevenueDetails-accent);
+    border-top: 4px solid transparent;
+    border-radius: 50%;
+    animation: RevenueDetails-spin 1s linear infinite;
+    margin-right: 1rem;
+}
+
+@keyframes RevenueDetails-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.RevenueDetails-table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #ffffff;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: var(--RevenueDetails-shadow);
+}
+
+.RevenueDetails-table th,
+.RevenueDetails-table td {
+    padding: 1.25rem;
+    text-align: left;
+    border-bottom: 1px solid var(--RevenueDetails-border);
+    font-size: 1rem;
+}
+
+.RevenueDetails-table th {
+    background-color: var(--RevenueDetails-primary);
+    color: #ffffff;
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--RevenueDetails-transition);
+}
+
+.RevenueDetails-table th:hover {
+    background-color: #2b4db7;
+}
+
+.RevenueDetails-sorted {
+    background-color: #2b4db7 !important;
+}
+
+.RevenueDetails-row {
+    transition: var(--RevenueDetails-transition);
+}
+
+.RevenueDetails-row:hover {
+    background-color: #f8fafc;
+    transform: translateY(-2px);
+}
+
+.RevenueDetails-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.RevenueDetails-items li {
+    margin-bottom: 0.5rem;
+    font-size: 0.95rem;
+}
+
+@media (max-width: 1024px) {
+    .RevenueDetails-container {
+        padding: 1.5rem;
+    }
+
+    .RevenueDetails-filter-bar {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .RevenueDetails-title {
+        font-size: 1.75rem;
+    }
+
+    .RevenueDetails-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .RevenueDetails-table th,
+    .RevenueDetails-table td {
+        padding: 0.75rem;
+        font-size: 0.9rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .RevenueDetails-container {
+        padding: 1rem;
+    }
+
+    .RevenueDetails-filter-bar {
+        padding: 1rem;
+    }
+
+    .RevenueDetails-export-buttons {
+        flex-direction: column;
+    }
+
+    .RevenueDetails-export-button {
+        width: 100%;
+    }
+
+    .RevenueDetails-table {
+        font-size: 0.85rem;
+    }
+}

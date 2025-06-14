@@ -1,0 +1,400 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
+:root {
+  --inventory-management-primary: #1e3a8a;
+  --inventory-management-secondary: #f1f5f9;
+  --inventory-management-accent: #2dd4bf;
+  --inventory-management-text: #111827;
+  --inventory-management-border: #e2e8f0;
+  --inventory-management-error: #b91c1c;
+  --inventory-management-success: #15803d;
+  --inventory-management-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+  --inventory-management-transition: all 0.3s ease;
+  --inventory-management-gradient: linear-gradient(135deg, #1e3a8a, #2dd4bf);
+}
+
+.inventory-management-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Inter', sans-serif;
+  background-color: #ffffff;
+  border-radius: 16px;
+  box-shadow: var(--inventory-management-shadow);
+  overflow-x: hidden;
+}
+
+.inventory-management-loading {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--inventory-management-text);
+  padding: 2rem;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.inventory-management-spinner {
+  width: 2rem;
+  height: 2rem;
+  border: 4px solid var(--inventory-management-accent);
+  border-top: 4px solid transparent;
+  border-radius: 50%;
+  animation: inventory-management-spin 1s linear infinite;
+  margin-right: 1rem;
+}
+
+@keyframes inventory-management-spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.inventory-management-error {
+  background-color: #fef2f2;
+  color: var(--inventory-management-error);
+  padding: 1rem;
+  border-radius: 8px;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  font-weight: 500;
+}
+
+.inventory-management-title {
+  font-size: 2.25rem;
+  font-weight: 700;
+  color: var(--inventory-management-primary);
+  text-align: center;
+  margin-bottom: 1.5rem;
+  background: var(--inventory-management-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.inventory-management-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid var(--inventory-management-border);
+}
+
+.inventory-management-tab {
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--inventory-management-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: var(--inventory-management-transition);
+}
+
+.inventory-management-tab.active {
+  color: var(--inventory-management-accent);
+  border-bottom: 2px solid var(--inventory-management-accent);
+}
+
+.inventory-management-tab:hover {
+  color: var(--inventory-management-accent);
+}
+
+.inventory-management-search-filter {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.inventory-management-search,
+.inventory-management-date-filter {
+  padding: 0.75rem;
+  border: 1px solid var(--inventory-management-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+.inventory-management-search:focus,
+.inventory-management-date-filter:focus {
+  outline: none;
+  border-color: var(--inventory-management-accent);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
+}
+
+.inventory-management-items-section,
+.inventory-management-transactions-section,
+.inventory-management-reports-section {
+  padding: 1.5rem;
+  background-color: var(--inventory-management-secondary);
+  border-radius: 12px;
+}
+
+.inventory-management-add-item-btn,
+.inventory-management-add-transaction-btn,
+.inventory-management-export-btn {
+  padding: 0.75rem 1.5rem;
+  background-color: var(--inventory-management-accent);
+  color: #ffffff;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 1rem;
+  transition: var(--inventory-management-transition);
+}
+
+.inventory-management-add-item-btn:hover,
+.inventory-management-add-transaction-btn:hover,
+.inventory-management-export-btn:hover {
+  background-color: #26a69a;
+  transform: translateY(-2px);
+}
+
+.inventory-management-items-table,
+.inventory-management-transactions-table,
+.inventory-management-low-stock-table {
+  width: 100%;
+  border-collapse: collapse;
+  background-color: #ffffff;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--inventory-management-shadow);
+}
+
+.inventory-management-table-header {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  background-color: var(--inventory-management-primary);
+  color: #ffffff;
+  font-weight: 600;
+  padding: 1rem;
+}
+
+.inventory-management-transactions-table .inventory-management-table-header,
+.inventory-management-transactions-table .inventory-management-table-row {
+  grid-template-columns: repeat(6, 1fr);
+}
+
+.inventory-management-low-stock-table .inventory-management-table-header,
+.inventory-management-low-stock-table .inventory-management-table-row {
+  grid-template-columns: repeat(4, 1fr);
+}
+
+.inventory-management-table-row {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  padding: 1rem;
+  border-bottom: 1px solid var(--inventory-management-border);
+}
+
+.inventory-management-table-row:nth-child(even) {
+  background-color: #f9fafb;
+}
+
+.inventory-management-table-row.low-stock {
+  background-color: #fef2f2;
+  color: var(--inventory-management-error);
+}
+
+.inventory-management-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.inventory-management-edit-btn,
+.inventory-management-delete-btn {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: var(--inventory-management-transition);
+}
+
+.inventory-management-edit-btn {
+  background-color: var(--inventory-management-accent);
+  color: #ffffff;
+}
+
+.inventory-management-edit-btn:hover {
+  background-color: #26a69a;
+}
+
+.inventory-management-delete-btn {
+  background-color: var(--inventory-management-error);
+  color: #ffffff;
+}
+
+.inventory-management-delete-btn:hover {
+  background-color: #991b1b;
+}
+
+.inventory-management-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.inventory-management-modal-content {
+  background-color: #ffffff;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 500px;
+  width: 90%;
+  box-shadow: var(--inventory-management-shadow);
+}
+
+.inventory-management-modal-content h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--inventory-management-primary);
+  margin-bottom: 1.5rem;
+}
+
+.inventory-management-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.inventory-management-form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.inventory-management-form-group label {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--inventory-management-text);
+  margin-bottom: 0.5rem;
+}
+
+.inventory-management-form-group input,
+.inventory-management-form-group select {
+  padding: 0.75rem;
+  border: 1px solid var(--inventory-management-border);
+  border-radius: 8px;
+  font-size: 1rem;
+  color: var(--inventory-management-text);
+}
+
+.inventory-management-form-group input:focus,
+.inventory-management-form-group select:focus {
+  outline: none;
+  border-color: var(--inventory-management-accent);
+  box-shadow: 0 0 0 3px rgba(45, 212, 191, 0.2);
+}
+
+.inventory-management-form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.inventory-management-cancel-btn,
+.inventory-management-submit-btn {
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.inventory-management-cancel-btn {
+  background-color: var(--inventory-management-error);
+  color: #ffffff;
+}
+
+.inventory-management-cancel-btn:hover {
+  background-color: #991b1b;
+}
+
+.inventory-management-submit-btn {
+  background-color: var(--inventory-management-accent);
+  color: #ffffff;
+}
+
+.inventory-management-submit-btn:hover {
+  background-color: #26a69a;
+}
+
+.inventory-management-reports-section h3,
+.inventory-management-low-stock-report h4 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--inventory-management-primary);
+  margin-bottom: 1rem;
+}
+
+.inventory-management-report-actions {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+  .inventory-management-container {
+    padding: 1.5rem;
+  }
+
+  .inventory-management-table-header,
+  .inventory-management-table-row {
+    grid-template-columns: repeat(4, 1fr);
+  }
+
+  .inventory-management-transactions-table .inventory-management-table-header,
+  .inventory-management-transactions-table .inventory-management-table-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .inventory-management-container {
+    padding: 1rem;
+  }
+
+  .inventory-management-tabs {
+    flex-direction: column;
+  }
+
+  .inventory-management-table-header,
+  .inventory-management-table-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .inventory-management-transactions-table .inventory-management-table-header,
+  .inventory-management-transactions-table .inventory-management-table-row,
+  .inventory-management-low-stock-table .inventory-management-table-header,
+  .inventory-management-low-stock-table .inventory-management-table-row {
+    display: flex;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .inventory-management-modal-content {
+    width: 95%;
+    padding: 1rem;
+  }
+
+  .inventory-management-search-filter {
+    flex-direction: column;
+  }
+  
+  .inventory-management-search,
+  .inventory-management-date-filter {
+    max-width: 100%;
+  }
+}
