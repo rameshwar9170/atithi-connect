@@ -14,9 +14,9 @@ function InventoryManagement() {
     name: '',
     category: 'housekeeping',
     unit: 'pieces',
-    currentStock: 0,
-    minStock: 0,
-    unitPrice: 0,
+    currentStock: '',
+    minStock: '',
+    unitPrice: '',
   });
   const [newTransaction, setNewTransaction] = useState({
     type: 'stock-in',
@@ -89,7 +89,7 @@ function InventoryManagement() {
     if (
       !newItem.name ||
       newItem.currentStock < 0 ||
-      newItem.minStock < 0 ||
+      // newItem.minStock < 0 ||
       newItem.unitPrice < 0
     ) {
       setError('Please fill in all fields with valid values.');
@@ -109,9 +109,9 @@ function InventoryManagement() {
         name: '',
         category: 'housekeeping',
         unit: 'pieces',
-        currentStock: 0,
-        minStock: 0,
-        unitPrice: 0,
+        currentStock: '',
+        // minStock: '',
+        unitPrice: '',
       });
       setEditItemId(null);
     } catch (err) {
@@ -216,7 +216,7 @@ function InventoryManagement() {
             item.category,
             item.unit,
             item.currentStock,
-            item.minStock,
+            // item.minStock,
             item.unitPrice,
             (item.currentStock * item.unitPrice).toFixed(2),
           ]
@@ -327,7 +327,6 @@ function InventoryManagement() {
               <div>Category</div>
               <div>Unit</div>
               <div>Stock</div>
-              <div>Min Stock</div>
               <div>Unit Price</div>
               <div>Value</div>
               <div>Actions</div>
@@ -343,7 +342,7 @@ function InventoryManagement() {
                 <div>{item.category}</div>
                 <div>{item.unit}</div>
                 <div>{item.currentStock}</div>
-                <div>{item.minStock}</div>
+                {/* <div>{item.minStock}</div> */}
                 <div>{formatCurrency(item.unitPrice)}</div>
                 <div>{formatCurrency(item.currentStock * item.unitPrice)}</div>
                 <div className="inventory-management-actions">
@@ -359,7 +358,7 @@ function InventoryManagement() {
                     className="inventory-management-delete-btn"
                     aria-label={`Delete ${item.name}`}
                   >
-                    Delete
+                    X
                   </button>
                 </div>
               </div>
@@ -426,7 +425,7 @@ function InventoryManagement() {
                 <div>Name</div>
                 <div>Category</div>
                 <div>Current Stock</div>
-                <div>Min Stock</div>
+                {/* <div>Min Stock</div> */}
               </div>
               {items
                 .filter((item) => item.currentStock <= item.minStock)
@@ -435,7 +434,7 @@ function InventoryManagement() {
                     <div>{item.name}</div>
                     <div>{item.category}</div>
                     <div>{item.currentStock}</div>
-                    <div>{item.minStock}</div>
+                    {/* <div>{item.minStock}</div> */}
                   </div>
                 ))}
             </div>
@@ -493,30 +492,29 @@ function InventoryManagement() {
                   value={newItem.currentStock}
                   onChange={(e) =>
                     setNewItem({ ...newItem, currentStock: Number(e.target.value) })
-                  }
-                  min="0"
+                  }                 
                   required
                   aria-required="true"
                 />
               </div>
-              <div className="inventory-management-form-group">
+              {/* <div className="inventory-management-form-group">
                 <label>Minimum Stock *</label>
                 <input
                   type="number"
                   value={newItem.minStock}
                   onChange={(e) => setNewItem({ ...newItem, minStock: Number(e.target.value) })}
-                  min="0"
+                 
                   required
                   aria-required="true"
                 />
-              </div>
+              </div> */}
               <div className="inventory-management-form-group">
                 <label>Unit Price (₹) *</label>
                 <input
                   type="number"
                   value={newItem.unitPrice}
                   onChange={(e) => setNewItem({ ...newItem, unitPrice: Number(e.target.value) })}
-                  min="0"
+                
                   step="0.01"
                   required
                   aria-required="true"
@@ -532,9 +530,9 @@ function InventoryManagement() {
                       name: '',
                       category: 'housekeeping',
                       unit: 'pieces',
-                      currentStock: 0,
-                      minStock: 0,
-                      unitPrice: 0,
+                      currentStock: '',
+                      // minStock: '',
+                      unitPrice: '',
                     });
                   }}
                   className="inventory-management-cancel-btn"

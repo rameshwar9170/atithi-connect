@@ -115,15 +115,17 @@ select:focus {
 
 .menu-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 10px;
 }
 
 .menu-card {
   border: 1px solid #e0e0e0;
   padding: 20px;
+  margin-bottom: 20px;
+  border-left: 3px solid #1976d2;
   border-radius: 12px;
-  background-color: #f8f9fa;
+  background-color: #f0f6fc;
   transition: all 0.3s ease;
   position: relative;
   overflow: hidden;
@@ -140,7 +142,15 @@ select:focus {
   color: #2c3e50;
   font-size: 18px;
 }
-
+.menu-card input{
+  margin-top:  3px;
+  
+  
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  color: #2c3e50;
+  font-size: 14px;
+}
 .menu-card p {
   margin: 8px 0;
   color: #555;
@@ -152,15 +162,16 @@ select:focus {
   justify-content: flex-end;
   gap: 12px;
   margin-top: 15px;
+  cursor: pointer;
 }
 
-.card-buttons svg {
+/* .card-buttons svg {
   cursor: pointer;
   font-size: 18px;
   padding: 8px;
   border-radius: 50%;
   transition: all 0.3s;
-}
+} */
 
 .card-buttons svg:first-child {
   color: #1976d2;

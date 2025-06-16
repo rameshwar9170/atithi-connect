@@ -232,7 +232,7 @@ function BranchDashboard() {
             </div>
           </div>
 
-          <div className="topbar-center">
+          {/* <div className="topbar-center">
             <div className="search-container">
               <FaSearch className="search-icon" />
               <input
@@ -243,7 +243,7 @@ function BranchDashboard() {
                 className="search-input"
               />
             </div>
-          </div>
+          </div> */}
 
           <div className="topbar-right">
             <button className="action-btn notification-btn" aria-label="Notifications">

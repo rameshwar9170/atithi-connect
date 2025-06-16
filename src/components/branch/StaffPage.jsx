@@ -109,7 +109,29 @@ function StaffPage() {
 
       {staffList.length > 0 && (
         <div className="staff-table-wrapper">
-          <button className="staff-add-button" onClick={() => setShowForm(true)}>Add Staff</button>
+          <button
+  className={`staff-add-button ${showForm ? 'cancel' : ''}`}
+  onClick={() => {
+    if (showForm) {
+      // Reset when cancelling
+      setFormError('');
+      setNewStaff({
+        name: '',
+        address: '',
+        phone: '',
+        aadhar: '',
+        education: '',
+        salary: '',
+        shiftTime: '',
+        designation: ''
+      });
+    }
+    setShowForm(!showForm); // Toggle form visibility
+  }}
+>
+  {showForm ? 'Cancel' : 'Add Staff'}
+</button>
+
           <div className="staff-table-scroll">
             <table className="staff-table">
               <thead>

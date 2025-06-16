@@ -273,7 +273,7 @@ function OrdersPage() {
     <div className="orders-page-container">
       {/* Tables Section */}
       <div className="restaurant-tables-section">
-        <h2 className="restaurant-tables-title">Restaurant Tables</h2>
+        {/*<h2 className="restaurant-tables-title">Restaurant Tables</h2>*/}
         <div className="restaurant-tables-grid">
           {tables.map(table => (
             <div
@@ -472,15 +472,14 @@ function OrdersPage() {
 
               <div className="bill-form-actions">
                 <button
+                style={{ marginRight: '150px', float: 'left' }}
                   type="button"
                   className="bill-cancel-btn"
                   onClick={() => setShowBillForm(false)}
                 >
                   Cancel
                 </button>
-                <button type="submit" className="bill-submit-btn">
-                  Save Bill
-                </button>
+                
                 <button
                   type="button"
                   className="bill-skip-btn"
@@ -515,6 +514,9 @@ function OrdersPage() {
                   }}
                 >
                   Skip
+                </button>
+                <button type="submit" className="bill-submit-btn">
+                  Save Bill
                 </button>
               </div>
             </form>

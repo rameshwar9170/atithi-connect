@@ -29,6 +29,9 @@
   cursor: pointer;
 }
 
+.staff-add-button.cancel {
+  background-color: #dc3545; /* Red */
+}
 .staff-form {
   background-color: #f5faff;
   padding: 20px;
@@ -59,7 +62,7 @@
 
 .staff-submit-button {
   margin-top: 16px;
-  background-color: #007bff;
+  background-color: #2b00ff;
   color: white;
   padding: 12px;
   border: none;
@@ -80,24 +83,28 @@
 
 .staff-table-scroll {
   overflow-x: auto;
+  border-radius: 15px;
+  box-shadow: 10px;
+
 }
 
 .staff-table {
   width: 100%;
   border-collapse: collapse;
   min-width: 800px;
+ 
 }
 
 .staff-table th,
 .staff-table td {
   padding: 14px 16px;
-  border: 1px solid #e0e0e0;
+  /* border: 1px solid #e0e0e0; */
   text-align: left;
 }
 
 .staff-table th {
-  background-color: #e3f2fd;
-  color: #333;
+ background: #023291;
+  color: #ffffff;
 }
 
 .staff-table tr:nth-child(even) {

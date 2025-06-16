@@ -428,7 +428,7 @@ useEffect(() => {
     <div className="rooms-page-container">
       {/* Rooms Section */}
       <div className="hotel-rooms-section">
-        <h2 className="hotel-rooms-title">Hotel Rooms</h2>
+        {/* <h2 className="hotel-rooms-title">Hotel Rooms</h2> */}
         <div className="hotel-rooms-grid">
           {rooms.map(room => (
             <div
@@ -437,16 +437,20 @@ useEffect(() => {
               onClick={() => handleRoomSelect(room)}
             >
               <div className="hotel-room-number">Room {room.roomNumber}</div>
-              <div className="hotel-room-type">{room.roomType || 'Standard'}</div>
+             
               {/* <div className="hotel-room-beds">
                 Beds: {room.occupiedBeds || 0}/{room.totalBeds}
               </div> */}
               <div className="hotel-room-price">
+                 <div className="hotel-room-type">{room.roomType || 'Standard'}</div>
                 ₹{room.pricePerDay || 'NA'}/day
               </div>
-              <div className="hotel-room-status">
-                {room.status === 'available' ? 'Available' : 'Occupied'}
-              </div>
+           {room.status === 'available' && (
+  <div className="hotel-room-status">
+    Available
+  </div>
+)}
+
               {room.status === 'occupied' && activeBookings[room.roomId] && (
                 <div className="room-time-remaining">
                   {getRemainingTime(activeBookings[room.roomId].checkOut)}

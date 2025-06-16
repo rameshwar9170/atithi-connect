@@ -23,6 +23,8 @@ const RevenueDetails = () => {
         paymentMode: "",
     });
     const [sortConfig, setSortConfig] = useState({ key: "createdAt", direction: "desc" });
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 10;
 
     useEffect(() => {
         setLoading(true);
@@ -147,6 +149,7 @@ const RevenueDetails = () => {
             key,
             direction: prev.key === key && prev.direction === "asc" ? "desc" : "asc",
         }));
+        setCurrentPage(1); // Reset to first page on sort
     };
 
     const handleFilterChange = (e) => {
@@ -156,6 +159,7 @@ const RevenueDetails = () => {
             [name]: value,
             ...(name === "dateRange" && value !== "custom" ? { startDate: "", endDate: "" } : {}),
         }));
+        setCurrentPage(1); // Reset to first page on filter change
     };
 
     const exportToCSV = () => {
@@ -270,6 +274,24 @@ const RevenueDetails = () => {
         });
     };
 
+    // Pagination logic
+    const totalPages = Math.ceil(filteredAndSortedBills.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const paginatedBills = filteredAndSortedBills.slice(startIndex, endIndex);
+
+    const handlePreviousPage = () => {
+        if (currentPage > 1) {
+            setCurrentPage(currentPage - 1);
+        }
+    };
+
+    const handleNextPage = () => {
+        if (currentPage < totalPages) {
+            setCurrentPage(currentPage + 1);
+        }
+    };
+
     return (
         <div className="RevenueDetails-container">
             <h2 className="RevenueDetails-title">Revenue Details</h2>
@@ -344,73 +366,100 @@ const RevenueDetails = () => {
                     </button>
                 </div>
             </div>
-            <div className="RevenueDetails-summary">
-                <p>Total Revenue: <span>{formatCurrency(totalRevenue)}</span></p>
-                <p>Total Bills: <span>{filteredAndSortedBills.length}</span></p>
-                <p>Average Bill: <span>{formatCurrency(analytics.averageBill)}</span></p>
-                <p>Top Payment Mode: <span>{analytics.topPaymentMode}</span></p>
-                <p>Most Frequent Table: <span>{analytics.mostFrequentTable}</span></p>
-                <p>Top Item: <span>{analytics.topItem}</span></p>
-            </div>
+          
             {loading ? (
                 <div className="RevenueDetails-loading">
                     <div className="RevenueDetails-spinner"></div>
                     Loading...
                 </div>
             ) : (
-                <table className="RevenueDetails-table">
-                    <thead>
-                        <tr>
-                            <th
-                                onClick={() => handleSort("billId")}
-                                className={sortConfig.key === "billId" ? "RevenueDetails-sorted" : ""}
-                            >
-                                Bill ID {sortConfig.key === "billId" && (sortConfig.direction === "asc" ? "↑" : "↓")}
-                            </th>
-                            <th
-                                onClick={() => handleSort("createdAt")}
-                                className={sortConfig.key === "createdAt" ? "RevenueDetails-sorted" : ""}
-                            >
-                                Date & Time {sortConfig.key === "createdAt" && (sortConfig.direction === "asc" ? "↑" : "↓")}
-                            </th>
-                            <th>Customer</th>
-                            <th>Table</th>
-                            <th>Payment Mode</th>
-                            <th>Items</th>
-                            <th
-                                onClick={() => handleSort("total")}
-                                className={sortConfig.key === "total" ? "RevenueDetails-sorted" : ""}
-                            >
-                                Total {sortConfig.key === "total" && (sortConfig.direction === "asc" ? "↑" : "↓")}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {filteredAndSortedBills.map((bill) => (
-                            <tr key={bill.billId} className="RevenueDetails-row">
-                                <td>{bill.billId}</td>
-                                <td>{formatDate(bill.createdAt)}</td>
-                                <td>
-                                    {bill.customer?.name || "Walk-in"} ({bill.customer?.phone || "N/A"})
-                                </td>
-                                <td>Table {bill.table}</td>
-                                <td>{bill.customer?.paymentMode || "Not Specified"}</td>
-                                <td>
-                                    <ul className="RevenueDetails-items">
-                                        {bill.items?.map((item, index) => (
-                                            <li key={index}>
-                                                {item.itemName} x {item.quantity} -{" "}
-                                                {formatCurrency(item.subtotal)}
-                                            </li>
-                                        ))}
-                                    </ul>
-                                </td>
-                                <td>{formatCurrency(bill.total)}</td>
+                <>
+                    <table className="RevenueDetails-table">
+                        <thead>
+                            <tr>
+                                <th
+                                    onClick={() => handleSort("createdAt")}
+                                    className={sortConfig.key === "createdAt" ? "RevenueDetails-sorted" : ""}
+                                >
+                                    Date & Time {sortConfig.key === "createdAt" && (sortConfig.direction === "asc" ? "↑" : "↓")}
+                                </th>
+                                <th>Customer</th>
+                                <th>Table</th>
+                                <th>Payment Mode</th>
+                                <th>Items</th>
+                                <th
+                                    onClick={() => handleSort("total")}
+                                    className={sortConfig.key === "total" ? "RevenueDetails-sorted" : ""}
+                                >
+                                    Total {sortConfig.key === "total" && (sortConfig.direction === "asc" ? "↑" : "↓")}
+                                </th>
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {paginatedBills.map((bill) => (
+                                <tr key={bill.billId} className="RevenueDetails-row">
+                                    <td>{formatDate(bill.createdAt)}</td>
+                                    <td>
+                                        {bill.customer?.name || "Walk-in"} ({bill.customer?.phone || "N/A"})
+                                    </td>
+                                    <td>Table {bill.table}</td>
+                                    <td>{bill.customer?.paymentMode || "Not Specified"}</td>
+                                    <td className="RevenueDetails-items-cell">
+                                        <div className="RevenueDetails-items-wrapper">
+                                            <span>
+                                                {bill.items && bill.items.length > 0
+                                                    ? `${bill.items[0].itemName} x ${bill.items[0].quantity} - ${formatCurrency(bill.items[0].subtotal)}`
+                                                    : "No Items"}
+                                            </span>
+                                            {bill.items && bill.items.length > 0 && (
+                                                <div className="RevenueDetails-items-popup">
+                                                    <ul className="RevenueDetails-items">
+                                                        {bill.items.map((item, index) => (
+                                                            <li key={index}>
+                                                                {item.itemName} x {item.quantity} -{" "}
+                                                                {formatCurrency(item.subtotal)}
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </td>
+                                    <td>{formatCurrency(bill.total)}</td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <div className="RevenueDetails-pagination">
+                        <button
+                            onClick={handlePreviousPage}
+                            disabled={currentPage === 1}
+                            className="RevenueDetails-button"
+                            aria-label="Previous Page"
+                        >
+                            Previous
+                        </button>
+                        <span className="RevenueDetails-page-info">
+                            Page {currentPage} of {totalPages || 1}
+                        </span>
+                        <button
+                            onClick={handleNextPage}
+                            disabled={currentPage >= totalPages}
+                            className="RevenueDetails-button"
+                            aria-label="Next Page"
+                        >
+                            Next
+                        </button>
+                    </div>
+                </>
             )}
+            <div className="RevenueDetails-summary" style={{ marginTop: "2rem" }}>
+                <p>Total Revenue: <span>{formatCurrency(totalRevenue)}</span></p>
+                <p>Total Bills: <span>{filteredAndSortedBills.length}</span></p>
+                
+                <p>Top Payment Mode: <span>{analytics.topPaymentMode}</span></p>
+                <p>Top Item: <span>{analytics.topItem}</span></p>
+            </div>
         </div>
     );
 };

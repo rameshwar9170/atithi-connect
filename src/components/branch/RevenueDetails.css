@@ -13,7 +13,7 @@
 }
 
 .RevenueDetails-container {
-    max-width: 1400px;
+   width: 100%;
     margin: 2rem auto;
     padding: 2rem;
     background-color: #ffffff;
@@ -74,6 +74,31 @@
     display: flex;
     gap: 0.5rem;
 }
+.RevenueDetails-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: right;
+    margin-top: 1rem;
+    gap: 1rem;
+}.RevenueDetails-button {
+    padding: 0.5rem 1rem;
+    background-color: #1a3a8a; /* Active button color (blue) */
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.RevenueDetails-button:hover:not(:disabled) {
+    background-color: #2b4aa0; /* Hover color for active buttons */
+}
+
+.RevenueDetails-button:disabled {
+    background-color: #999999; /* Distinct gray color for disabled buttons */
+    cursor: not-allowed;
+}
 
 .RevenueDetails-export-button {
     padding: 0.75rem 1.25rem;
@@ -97,9 +122,9 @@
 }
 
 .RevenueDetails-summary {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 1rem;
+    display: flex;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 2rem;
     margin-bottom: 2rem;
     padding: 1.5rem;
     background-color: var(--RevenueDetails-secondary);
@@ -151,6 +176,12 @@
     overflow: hidden;
     box-shadow: var(--RevenueDetails-shadow);
 }
+/* .evenueDetails-table thead {
+    background-color: var(--RevenueDetails-primary);
+    color: #ffffff;
+    font-weight: 600;
+    padding: 1rem;
+} */
 
 .RevenueDetails-table th,
 .RevenueDetails-table td {
@@ -242,4 +273,42 @@
     .RevenueDetails-table {
         font-size: 0.85rem;
     }
+}
+.RevenueDetails-items-cell {
+    position: relative;
+}
+
+.RevenueDetails-items-wrapper {
+    position: relative;
+    cursor: pointer;
+}
+
+.RevenueDetails-items-popup {
+    display: none;
+    position: absolute;
+    bottom: 100%; /* Changed from top: 100% to position above */
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+    z-index: 10;
+    min-width: 200px;
+    max-width: 300px;
+}
+
+.RevenueDetails-items-wrapper:hover .RevenueDetails-items-popup {
+    display: block;
+}
+
+.RevenueDetails-items {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.RevenueDetails-items li {
+    margin-bottom: 5px;
+    font-size: 14px;
 }

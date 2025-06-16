@@ -15,6 +15,16 @@ function MenuPage() {
   const [editId, setEditId] = useState(null);
   const [editData, setEditData] = useState({});
 
+  const [imagePreview, setImagePreview] = useState(null);
+const handleImageChange = (e) => {
+  const file = e.target.files[0];
+  if (file) {
+    setFormData(prev => ({ ...prev, itemImage: file }));
+    setImagePreview(URL.createObjectURL(file)); // shows preview
+  }
+};
+
+
   // Fetch menu items
   useEffect(() => {
     if (!branchId) return;
@@ -25,6 +35,7 @@ function MenuPage() {
     });
   }, [branchId]);
 
+  
   // Fetch categories
   useEffect(() => {
     if (!branchId) return;
@@ -33,7 +44,7 @@ function MenuPage() {
       const data = snapshot.exists() ? Object.values(snapshot.val()).map(cat => cat.name) : [];
       setMenuCategories(data);
     });
-  }, [branchId]);
+  }, [branchId]); 
 
   const handleChange = (e, isEdit) => {
     const { name, value, type, checked } = e.target;
@@ -93,7 +104,7 @@ function MenuPage() {
   return (
     <div className="menu-container">
       <div className="menu-header">
-        <h2>Menu Management</h2>
+        <h2>Menu </h2>
         <button className="add-menu-button" onClick={() => setFormVisible(!formVisible)}>
           {formVisible ? 'Close' : 'Add Menu'}
         </button>
@@ -110,7 +121,25 @@ function MenuPage() {
           </div>
           <div className="form-group"><label>Item Name</label><input name="itemName" value={formData.itemName} onChange={handleChange} required /></div>
           <div className="form-group"><label>Price (₹)</label><input name="itemPrice" type="number" value={formData.itemPrice} onChange={handleChange} required /></div>
+       <div className="form-group">
+              <label>Item Image</label>
+              <input
+                type="file"
+                name="itemImage"  
+                accept="image/*"
+                onChange={handleImageChange}
+                required
+              />
+            </div>
+
+            {imagePreview && (
+              <div className="form-group">
+                <img src={imagePreview} alt="Preview" style={{ width: '100px', marginTop: '10px' }} />
+              </div>
+            )}
+
           <div className="form-group checkbox-group">
+
             <label><input name="isAvailable" type="checkbox" checked={formData.isAvailable} onChange={handleChange} /> Available</label>
           </div>
           <button className="primary-button" type="submit">Save Item</button>
@@ -124,8 +153,9 @@ function MenuPage() {
           <div className="menu-grid">
             {menuItems.map(item => (
               <div key={item.id} className="menu-card">
-                {editId === item.id ? (
+                {editId === item.id ?  (
                   <>
+                
                     <select name="itemCategory" value={editData.itemCategory} onChange={e => handleChange(e, true)}>
                       {menuCategories.map((cat, idx) => <option key={idx} value={cat}>{cat}</option>)}
                     </select>
