@@ -4,6 +4,8 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  setPersistence,
+  inMemoryPersistence,
 } from 'firebase/auth';
 import { getDatabase, ref, get } from 'firebase/database';
 import '../styles/Login.css';
@@ -35,14 +37,19 @@ function Login() {
     const userData = snapshot.val();
 
     try {
+      // 🔐 Make auth session temporary
+      await setPersistence(auth, inMemoryPersistence);
+
       // Try logging in
       await signInWithEmailAndPassword(auth, email, password);
       handlePostLogin(userData.role, userData);
     } catch (loginErr) {
       try {
+        // 🔐 Set temporary session again for registration fallback
+        await setPersistence(auth, inMemoryPersistence);
+
         // Try creating an account just to authenticate
         await createUserWithEmailAndPassword(auth, email, password);
-        // ✅ Do NOT write to the database again
         handlePostLogin(userData.role, userData);
       } catch (registerErr) {
         console.error('Auth failed:', registerErr);
