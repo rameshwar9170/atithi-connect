@@ -772,7 +772,7 @@
 
   .topbar {
     padding: 0 0.75rem;
-    height: 3rem; /* 48px to rem */
+    height: 6rem; /* 48px to rem */
   }
 
   .mobile-menu-toggle {

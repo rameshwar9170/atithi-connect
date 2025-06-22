@@ -123,30 +123,30 @@ function BranchDashboard() {
     label: 'Menu',
     isActive: currentPath === '/branch-dashboard/menu',
   },
-  {
-    path: '/branch-dashboard/payments',
-    icon: FaMoneyBillWave,
-    label: 'Payments',
-    isActive: currentPath === '/branch-dashboard/payments',
-  },
+  // {
+  //   path: '/branch-dashboard/payments',
+  //   icon: FaMoneyBillWave,
+  //   label: 'Payments',
+  //   isActive: currentPath === '/branch-dashboard/payments',
+  // },
   {
     path: '/branch-dashboard/reports',
     icon: FaChartPie,
     label: 'Reports',
     isActive: currentPath === '/branch-dashboard/reports',
   },
-  {
-    path: '/branch-dashboard/billing',
-    icon: FaFileInvoiceDollar,
-    label: 'Billing',
-    isActive: currentPath === '/branch-dashboard/billing',
-  },
-  {
-    path: '/branch-dashboard/notifications',
-    icon: FaBell,
-    label: 'Notifications',
-    isActive: currentPath === '/branch-dashboard/notifications',
-  },
+  // {
+  //   path: '/branch-dashboard/billing',
+  //   icon: FaFileInvoiceDollar,
+  //   label: 'Billing',
+  //   isActive: currentPath === '/branch-dashboard/billing',
+  // },
+  // {
+  //   path: '/branch-dashboard/notifications',
+  //   icon: FaBell,
+  //   label: 'Notifications',
+  //   isActive: currentPath === '/branch-dashboard/notifications',
+  // },
   {
     path: '/branch-dashboard/settings',
     icon: FaCog,
@@ -252,10 +252,10 @@ function BranchDashboard() {
           </div> */}
 
           <div className="topbar-right">
-            <button className="action-btn notification-btn" aria-label="Notifications">
+            {/* <button className="action-btn notification-btn" aria-label="Notifications">
               <FaBell />
               {unreadNotifications > 0 && <span className="notification-badge">{unreadNotifications}</span>}
-            </button>
+            </button> */}
 
             <div className="user-menu-container">
               <button

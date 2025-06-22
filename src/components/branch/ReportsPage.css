@@ -86,8 +86,8 @@
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.5rem;
-  flex-wrap: wrap;
-  justify-content: center;
+  /* flex-wrap: wrap; */
+  /* justify-content: center; */
   border-bottom: 1px solid var(--reports-page-border);
 }
 
@@ -117,10 +117,11 @@
 .reports-page-filters {
   display: flex;
   gap: 1rem;
+  padding-left: 20px;
   margin-bottom: 1.5rem;
   flex-wrap: wrap;
-  align-items: center;
-  justify-content: center;
+  /* align-items: center;
+  justify-content: center; */
 }
 
 .reports-page-date-picker {
@@ -221,6 +222,8 @@
 
 .reports-page-card ul li {
   margin-bottom: 0.25rem;
+  margin: 10px;
+  list-style: none;
 }
 
 .reports-page-chart {
@@ -230,9 +233,10 @@
 
 .reports-page-actions {
   display: flex;
+  
   gap: 0.75rem;
   margin-bottom: 1.5rem;
-  flex-wrap: wrap;
+  /* flex-wrap: wrap; */
 }
 
 .reports-page-export-btn {
@@ -379,9 +383,9 @@
 }
 
 @media (max-width: 992px) {
-  .reports-page-container {
+  /* .reports-page-container {
     padding: 1.25rem;
-  }
+  } */
 
   .reports-page-title {
     font-size: 1.75rem;
@@ -397,13 +401,13 @@
   }
 
   .reports-page-filters {
-    flex-direction: column;
+    /* flex-direction: column; */
     align-items: stretch;
   }
-
+/* 
   .reports-page-date-picker {
     min-width: 100%;
-  }
+  } */
 
   .reports-page-date-input, .reports-page-search {
     max-width: 100%;
@@ -421,8 +425,8 @@
 
 @media (max-width: 768px) {
   .reports-page-container {
-    padding: 1rem;
-    margin: 0.5rem;
+    /* padding: 1rem; */
+    /* margin: 0.5rem; */
     border-radius: 8px;
   }
 
@@ -431,7 +435,7 @@
   }
 
   .reports-page-tabs {
-    flex-direction: column;
+    /* flex-direction: column; */
     align-items: stretch;
   }
 
@@ -477,9 +481,9 @@
 }
 
 @media (max-width: 576px) {
-  .reports-page-container {
+  /* .reports-page-container {
     padding: 0.75rem;
-  }
+  } */
 
   .reports-page-title {
     font-size: 1.25rem;
@@ -595,6 +599,14 @@
     font-size: 0.85rem;
     margin-bottom: 0px;
   }
+  .reports-page-table{
+    width: 340px;
+    padding: 0;
+    margin: 0;
+  }
+  .reports-page-table-row{
+    /* width: 340px; */
+  }
 }
 
 @media (max-width: 480px) {
@@ -603,6 +615,7 @@
   padding: 0 5px;
   display: flex; /* Ensure it's a flex item */
 }
+
 
 
   .reports-page-pagination-btn {
@@ -615,5 +628,13 @@
   .reports-page-pagination-text {
     font-size: 0.7rem;
     margin-bottom: 0px;
+  }
+  .reports-page-table{
+    width: 340px;
+    margin: 0;
+    padding: 0;
+  }
+  .reports-page-table-row{
+    /* width: 340px; */
   }
 }

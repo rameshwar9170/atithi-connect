@@ -3,6 +3,9 @@ import { ref, onValue } from "firebase/database";
 import { db } from "../../firebase/config";
 import * as XLSX from 'xlsx';
 import "./RevenueDetails.css";
+import jsPDF from 'jspdf'; // ❗Notice: NOT destructured
+import autoTable from 'jspdf-autotable';
+
 
 const RevenueDetails = () => {
     const branchId = localStorage.getItem("branchId");
@@ -193,70 +196,29 @@ const RevenueDetails = () => {
         window.URL.revokeObjectURL(url);
     };
 
-    const exportToExcel = () => {
-        const headers = [
-            "Bill ID",
-            "Date & Time",
-            "Customer",
-            "Table",
-            "Payment Mode",
-            "Items",
-            "Total",
-        ];
-        const rows = filteredAndSortedBills.map((bill) => [
-            bill.billId,
-            formatDate(bill.createdAt),
-            `${bill.customer?.name || "Walk-in"} (${bill.customer?.phone || "N/A"})`,
-            `Table ${bill.table}`,
-            bill.customer?.paymentMode || "Not Specified",
-            bill.items
-                ?.map((item) => `${item.itemName} x ${item.quantity} - ${formatCurrency(item.subtotal)}`)
-                .join("; "),
-            formatCurrency(bill.total),
-        ]);
-        const ws = XLSX.utils.aoa_to_sheet([headers, ...rows]);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Revenue Details");
-        XLSX.write(wb, "revenue_details.xlsx");
-    };
+const exportToPDF = () => {
+  const doc = new jsPDF();
+  autoTable(doc, {
+    startY: 90,
+    head: [["Bill ID", "Date & Time", "Customer", "Table", "Payment Mode", "Items", "Total"]],
+    body: filteredAndSortedBills.map((bill) => [
+      bill.billId,
+      formatDate(bill.createdAt),
+      `${bill.customer?.name || "Walk-in"} (${bill.customer?.phone || "N/A"})`,
+      `Table ${bill.table}`,
+      bill.customer?.paymentMode || "Not Specified",
+      bill.items?.map(item =>
+        `${item.itemName} x ${item.quantity} - ${formatCurrency(item.subtotal)}`
+      ).join("; "),
+      formatCurrency(bill.total),
+    ]),
+    styles: { fontSize: 10 },
+    headStyles: { fillColor: [30, 58, 138] },
+  });
 
-    const exportToPDF = () => {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        doc.setFont("Inter", "normal");
-        doc.setFontSize(16);
-        doc.text("Revenue Details Report", 20, 20);
-        doc.setFontSize(12);
-        doc.text(`Total Revenue: ${formatCurrency(totalRevenue)}`, 20, 30);
-        doc.text(`Total Bills: ${filteredAndSortedBills.length}`, 20, 40);
-        doc.text(`Average Bill: ${formatCurrency(analytics.averageBill)}`, 20, 50);
-        doc.text(`Top Payment Mode: ${analytics.topPaymentMode}`, 20, 60);
-        doc.text(`Most Frequent Table: ${analytics.mostFrequentTable}`, 20, 70);
-        doc.text(`Top Item: ${analytics.topItem}`, 20, 80);
+  doc.save("revenue_details.pdf");
+};
 
-        const headers = [
-            ["Bill ID", "Date & Time", "Customer", "Table", "Payment Mode", "Items", "Total"],
-        ];
-        const rows = filteredAndSortedBills.map((bill) => [
-            bill.billId,
-            formatDate(bill.createdAt),
-            `${bill.customer?.name || "Walk-in"} (${bill.customer?.phone || "N/A"})`,
-            `Table ${bill.table}`,
-            bill.customer?.paymentMode || "Not Specified",
-            bill.items
-                ?.map((item) => `${item.itemName} x ${item.quantity} - ${formatCurrency(item.subtotal)}`)
-                .join("; "),
-            formatCurrency(bill.total),
-        ]);
-        doc.autoTable({
-            startY: 90,
-            head: headers,
-            body: rows,
-            styles: { font: "Inter", fontSize: 10 },
-            headStyles: { fillColor: [30, 58, 138] },
-        });
-        doc.save("revenue_details.pdf");
-    };
 
     const formatCurrency = (amount) => {
         return new Intl.NumberFormat("en-IN", {
@@ -350,13 +312,7 @@ const RevenueDetails = () => {
                     >
                         CSV
                     </button>
-                    <button
-                        onClick={exportToExcel}
-                        className="RevenueDetails-export-button"
-                        aria-label="Export to Excel"
-                    >
-                        Excel
-                    </button>
+                   
                     <button
                         onClick={exportToPDF}
                         className="RevenueDetails-export-button"

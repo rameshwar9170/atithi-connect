@@ -515,6 +515,9 @@
 .table-container {
   position: relative;
   display: inline-block;
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 /* Temporary table styling */

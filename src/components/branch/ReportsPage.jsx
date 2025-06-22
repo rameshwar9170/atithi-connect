@@ -614,7 +614,7 @@ function ReportsPage() {
         </div>
       )}
       {error && <div className="reports-page-error">{error}</div>}
-      <h2 className="reports-page-title">Reports Dashboard</h2>
+      {/* <h2 className="reports-page-title">Reports Dashboard</h2> */}
       <div className="reports-page-tabs">
         {['sales', 'bookings', 'inventory', 'staff'].map((tab) => (
           <button
@@ -660,14 +660,7 @@ function ReportsPage() {
             aria-label="Select End Date"
           />
         </div>
-        <input
-          type="text"
-          placeholder="Search..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="reports-page-search"
-          aria-label="Search reports"
-        />
+      
       </div>
       {activeTab === 'sales' && salesReport()}
       {activeTab === 'bookings' && bookingsReport()}
