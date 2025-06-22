@@ -35,6 +35,12 @@ function BranchDashboard() {
   const navigate = useNavigate();
   const location = useLocation();
 
+
+  const handleSignOut = () => {
+  localStorage.clear();
+  navigate('/login', { replace: true });
+};
+
   useEffect(() => {
     const handleResize = () => {
       setMobileView(window.innerWidth < 768);
@@ -282,7 +288,7 @@ function BranchDashboard() {
                       <FaCog /> Account Settings
                     </button>
                     <div className="dropdown-divider" />
-                    <button className="dropdown-item danger">
+                    <button className="dropdown-item danger" onClick={handleSignOut}>
                       <FaSignOutAlt /> Sign Out
                     </button>
                   </div>

@@ -27,7 +27,7 @@ function RoomsPage() {
     checkOut: '',
     days: 1,
     amount: 0,
-    advance: 0,
+    advance: '',
     paymentMode: '',
     notes: ''
   });
@@ -331,7 +331,7 @@ useEffect(() => {
         checkOut: '',
         days: 1,
         amount: 0,
-        advance: 0,
+        advance: '',
         paymentMode: '',
         notes: ''
       });

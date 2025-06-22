@@ -6,6 +6,7 @@ import './OrdersPage.css';
 function OrdersPage() {
   const branchId = localStorage.getItem('branchId');
   const [tables, setTables] = useState([]);
+  const [tempTables, setTempTables] = useState([]);
   const [menuItems, setMenuItems] = useState([]);
   const [selectedTable, setSelectedTable] = useState(null);
   const [query, setQuery] = useState('');
@@ -66,6 +67,30 @@ function OrdersPage() {
   }, [branchId]);
 
   useEffect(() => {
+    const savedTempTables = localStorage.getItem('tempTables');
+    if (savedTempTables) {
+      const parsedTempTables = JSON.parse(savedTempTables);
+      setTempTables(parsedTempTables);
+      
+      setTableOrders(prev => {
+        const newOrders = { ...prev };
+        parsedTempTables.forEach(table => {
+          const tableId = table.tableId;
+          if (!newOrders[tableId]) {
+            const saved = localStorage.getItem(`orders-${tableId}`);
+            newOrders[tableId] = saved ? JSON.parse(saved) : [];
+          }
+        });
+        return newOrders;
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem('tempTables', JSON.stringify(tempTables));
+  }, [tempTables]);
+
+  useEffect(() => {
     setResults(
       query
         ? menuItems.filter(item =>
@@ -84,13 +109,70 @@ function OrdersPage() {
     }
   }, [selectedTable, tableOrders]);
 
-  // Save to localStorage whenever orders change
   useEffect(() => {
     if (selectedTable) {
       const tableId = selectedTable.tableId;
       localStorage.setItem(`orders-${tableId}`, JSON.stringify(tableOrders[tableId] || []));
     }
   }, [tableOrders, selectedTable]);
+
+  const createTempTable = (parentTable) => {
+    if (!parentTable || parentTable.status !== 'booked') {
+      alert('Can only create subtables for booked tables');
+      return;
+    }
+
+    const baseTableNumber = parentTable.tableNumber;
+    const existingSubtables = tempTables.filter(table => 
+      table.parentTableNumber === baseTableNumber
+    );
+    
+    const nextLetter = String.fromCharCode(65 + existingSubtables.length);
+    const newTableNumber = `${baseTableNumber}${nextLetter}`;
+    
+    const newTempTable = {
+      tableId: `temp-${baseTableNumber}-${nextLetter}`,
+      tableNumber: newTableNumber,
+      parentTableNumber: baseTableNumber,
+      status: 'booked',
+      isTemporary: true,
+      createdAt: Date.now()
+    };
+
+    setTempTables(prev => [...prev, newTempTable]);
+    
+    setTableOrders(prev => ({
+      ...prev,
+      [newTempTable.tableId]: []
+    }));
+  };
+
+  const deleteTempTable = (tempTableId) => {
+    const tempTable = tempTables.find(table => table.tableId === tempTableId);
+    if (!tempTable) return;
+
+    const confirmDelete = window.confirm(
+      `Are you sure you want to delete temporary table ${tempTable.tableNumber}?` +
+      (tableOrders[tempTableId]?.length > 0 ? `\nThis table has orders.` : '')
+    );
+    if (!confirmDelete) return; // Abort if user clicks Cancel
+
+    setTempTables(prev => prev.filter(table => table.tableId !== tempTableId));
+
+    setTableOrders(prev => {
+      const newOrders = { ...prev };
+      delete newOrders[tempTableId];
+      return newOrders;
+    });
+
+    localStorage.removeItem(`orders-${tempTableId}`);
+
+    if (selectedTable?.tableId === tempTableId) {
+      setSelectedTable(null);
+    }
+
+    
+  };
 
   const handleTableSelect = (table) => {
     setSelectedTable(table);
@@ -136,7 +218,7 @@ function OrdersPage() {
       return updatedOrders;
     });
 
-    if (selectedTable.status === 'available') {
+    if (!selectedTable.isTemporary && selectedTable.status === 'available') {
       await updateTableStatus(selectedTable, 'booked');
     }
 
@@ -146,7 +228,7 @@ function OrdersPage() {
 
   const updateTableStatus = async (table, status) => {
     try {
-      if (!table || !table.tableId) return;
+      if (!table || !table.tableId || table.isTemporary) return;
 
       let updatePath = '';
       if (table.firebaseIndex !== undefined) {
@@ -184,7 +266,7 @@ function OrdersPage() {
       return updatedOrders;
     });
 
-    if (remainingItems.length === 0 && selectedTable.status === 'booked') {
+    if (!selectedTable.isTemporary && remainingItems.length === 0 && selectedTable.status === 'booked') {
       await updateTableStatus(selectedTable, 'available');
     }
   };
@@ -233,14 +315,18 @@ function OrdersPage() {
         createdAt: Date.now(),
       });
 
-      // Clear orders from state and localStorage
       setTableOrders(prev => ({
         ...prev,
         [selectedTable.tableId]: []
       }));
       localStorage.removeItem(`orders-${selectedTable.tableId}`);
 
-      await updateTableStatus(selectedTable, 'available');
+      if (selectedTable.isTemporary) {
+        deleteTempTable(selectedTable.tableId);
+      } else {
+        await updateTableStatus(selectedTable, 'available');
+      }
+
       setCustomer({ name: '', phone: '' });
       setShowBillForm(false);
     } catch (error) {
@@ -264,38 +350,68 @@ function OrdersPage() {
     }));
     localStorage.removeItem(`orders-${selectedTable.tableId}`);
 
-    if (selectedTable.status === 'booked') {
+    if (!selectedTable.isTemporary && selectedTable.status === 'booked') {
       await updateTableStatus(selectedTable, 'available');
     }
   };
 
+  const getAllTables = () => {
+    return [...tables, ...tempTables];
+  };
+
   return (
     <div className="orders-page-container">
-      {/* Tables Section */}
       <div className="restaurant-tables-section">
-        {/*<h2 className="restaurant-tables-title">Restaurant Tables</h2>*/}
         <div className="restaurant-tables-grid">
-          {tables.map(table => (
-            <div
-              key={table.tableId}
-              className={`restaurant-table-card ${table.status === 'available' ? 'table-available' : 'table-booked'} ${selectedTable?.tableId === table.tableId ? 'table-selected' : ''}`}
-              onClick={() => handleTableSelect(table)}
-            >
-              <div className="restaurant-table-number">Table {table.tableNumber}</div>
-              <div className="restaurant-table-status">
-                {table.status === 'available' ? 'Available' : 'Booked'}
+          {getAllTables().map(table => (
+            <div key={table.tableId} className="table-container">
+              <div
+                className={`restaurant-table-card ${table.status === 'available' ? 'table-available' : 'table-booked'} ${selectedTable?.tableId === table.tableId ? 'table-selected' : ''} ${table.isTemporary ? 'table-temporary' : ''}`}
+                onClick={() => handleTableSelect(table)}
+              >
+                <div className="restaurant-table-number">
+                  Table {table.tableNumber}
+                  {table.isTemporary && <span className="temp-indicator"> (Temp)</span>}
+                </div>
+                <div className="restaurant-table-status">
+                  {table.status === 'available' ? 'Available' : 'Booked'}
+                </div>
               </div>
+              
+              {!table.isTemporary && table.status === 'booked' && (
+                <button
+                  className="add-subtable-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    createTempTable(table);
+                  }}
+                  title={`Add subtable for Table ${table.tableNumber}`}
+                >
+                  +
+                </button>
+              )}
+              
+              {table.isTemporary && (
+                <button
+                  className="delete-temp-table-btn"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    deleteTempTable(table.tableId);
+                  }}
+                  title={`Delete temporary table ${table.tableNumber}`}
+                >
+                  ×
+                </button>
+              )}
             </div>
           ))}
         </div>
       </div>
 
-      {/* Main Content Area */}
       <div className="orders-main-content">
-        {/* Selected Table Header & Search */}
         <div className="selected-table-section">
           <h3 className="selected-table-title">
-            {selectedTable ? `Table ${selectedTable.tableNumber}` : 'Select a Table'}
+            {selectedTable ? `Table ${selectedTable.tableNumber}${selectedTable.isTemporary ? ' (Temporary)' : ''}` : 'Select a Table'}
           </h3>
           {selectedTable && (
             <div className="menu-search-container">
@@ -310,7 +426,6 @@ function OrdersPage() {
           )}
         </div>
 
-        {/* Search Results */}
         {results.length > 0 && (
           <div className="menu-search-results">
             {results.map(item => (
@@ -326,16 +441,16 @@ function OrdersPage() {
           </div>
         )}
 
-        {/* Order Items Table */}
         <div className="order-items-section">
           {selectedTable ? (
             getCurrentOrders().length > 0 ? (
               <div className="order-items-table">
                 <div className="order-table-header">
                   <div className="order-header-item">Item</div>
-                  <div className="order-header-price">Price</div>
+                  <div className="order Aubrey-header-price">Price</div>
                   <div className="order-header-quantity">Quantity</div>
                   <div className="order-header-total">Total</div>
+                  
                   <div className="order-header-action">Action</div>
                 </div>
                 {getCurrentOrders().map(item => (
@@ -386,7 +501,6 @@ function OrdersPage() {
           )}
         </div>
 
-        {/* Clear All Orders Button */}
         {selectedTable && getCurrentOrders().length > 0 && (
           <div className="clear-orders-section">
             <button
@@ -399,7 +513,6 @@ function OrdersPage() {
         )}
       </div>
 
-      {/* Footer with Total and Generate Bill */}
       <div className="orders-page-footer">
         <div className="total-amount-display">
           <span className="total-label-text">Total: </span>
@@ -414,7 +527,6 @@ function OrdersPage() {
         </button>
       </div>
 
-      {/* Bill Modal */}
       {showBillForm && (
         <div className="bill-generation-modal">
           <div className="bill-modal-content">
@@ -472,7 +584,7 @@ function OrdersPage() {
 
               <div className="bill-form-actions">
                 <button
-                style={{ marginRight: '150px', float: 'left' }}
+                  style={{ marginRight: '150px', float: 'left' }}
                   type="button"
                   className="bill-cancel-btn"
                   onClick={() => setShowBillForm(false)}
@@ -492,7 +604,6 @@ function OrdersPage() {
                         billId: newBill.key,
                         table: selectedTable.tableNumber,
                         customer: { name: "NA", phone: "NA", paymentMode: "NA" },
-
                         items: tableOrders[selectedTable.tableId],
                         total,
                         createdAt: Date.now(),
@@ -503,7 +614,11 @@ function OrdersPage() {
                         [selectedTable.tableId]: []
                       }));
 
-                      await updateTableStatus(selectedTable, 'available');
+                      if (selectedTable.isTemporary) {
+                        deleteTempTable(selectedTable.tableId);
+                      } else {
+                        await updateTableStatus(selectedTable, 'available');
+                      }
 
                       setCustomer({ name: '', phone: '' });
                       setShowBillForm(false);
@@ -522,8 +637,7 @@ function OrdersPage() {
             </form>
           </div>
         </div>
-      )}
-
+        )}
     </div>
   );
 }

@@ -6,6 +6,7 @@ import {
   signInWithEmailAndPassword,
   setPersistence,
   inMemoryPersistence,
+  browserSessionPersistence,
 } from 'firebase/auth';
 import { getDatabase, ref, get } from 'firebase/database';
 import '../styles/Login.css';
@@ -14,6 +15,8 @@ function Login() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false); // New state for checkbox
 
   const navigate = useNavigate();
   const auth = getAuth();
@@ -24,41 +27,47 @@ function Login() {
   const handleLogin = async (e) => {
     e.preventDefault();
     setError('');
+    setIsLoading(true);
 
     const emailKey = convertEmailToKey(email);
     const userRef = ref(database, `users/${emailKey}`);
-    const snapshot = await get(userRef);
-
-    if (!snapshot.exists()) {
-      setError('❌ This email is not registered in the system.');
-      return;
-    }
-
-    const userData = snapshot.val();
-
     try {
-      // 🔐 Make auth session temporary
-      await setPersistence(auth, inMemoryPersistence);
+      const snapshot = await get(userRef);
 
-      // Try logging in
-      await signInWithEmailAndPassword(auth, email, password);
-      handlePostLogin(userData.role, userData);
-    } catch (loginErr) {
-      try {
-        // 🔐 Set temporary session again for registration fallback
-        await setPersistence(auth, inMemoryPersistence);
-
-        // Try creating an account just to authenticate
-        await createUserWithEmailAndPassword(auth, email, password);
-        handlePostLogin(userData.role, userData);
-      } catch (registerErr) {
-        console.error('Auth failed:', registerErr);
-        setError('❌ Login or registration failed. Please check credentials.');
+      if (!snapshot.exists()) {
+        setError('❌ This email is not registered in the system.');
+        setIsLoading(false);
+        return;
       }
+
+      const userData = snapshot.val();
+
+      // Set persistence based on checkbox
+      await setPersistence(auth, rememberMe ? browserSessionPersistence : inMemoryPersistence);
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        handlePostLogin(userData.role, userData);
+      } catch (loginErr) {
+        try {
+          await setPersistence(auth, rememberMe ? browserSessionPersistence : inMemoryPersistence);
+          await createUserWithEmailAndPassword(auth, email, password);
+          handlePostLogin(userData.role, userData);
+        } catch (registerErr) {
+          console.error('Auth failed:', registerErr);
+          setError('❌ Login or registration failed. Please check credentials.');
+          setIsLoading(false);
+        }
+      }
+    } catch (err) {
+      console.error('Database error:', err);
+      setError('❌ An error occurred. Please try again.');
+      setIsLoading(false);
     }
   };
 
   const handlePostLogin = (role, userData) => {
+    setIsLoading(false);
     if (role === 'Org') {
       localStorage.setItem('orgId', userData.orgId || '');
       navigate('/organizations-dashboard/org');
@@ -74,7 +83,13 @@ function Login() {
 
   return (
     <div className="login-container">
-      <form onSubmit={handleLogin} className="login-form">
+      {isLoading && (
+        <div className="loading-popup">
+          <div className="loading-spinner"></div>
+          <p className="loading-text">Loading...</p>
+        </div>
+      )}
+      <form onSubmit={handleLogin} className="login-form" aria-busy={isLoading}>
         <h2>Login or Register</h2>
         {error && <p className="error">{error}</p>}
 
@@ -92,8 +107,20 @@ function Login() {
           onChange={(e) => setPassword(e.target.value)}
           required
         />
+        
+        <label className="checkbox-container">
+          <input
+            type="checkbox"
+            checked={rememberMe}
+            onChange={(e) => setRememberMe(e.target.checked)}
+            aria-label="Remember me"
+          />
+          <span className="checkbox-label">Remember me</span>
+        </label>
 
-        <button type="submit">Continue</button>
+        <button type="submit" disabled={isLoading}>
+          Continue
+        </button>
       </form>
     </div>
   );

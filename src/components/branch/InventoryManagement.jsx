@@ -10,6 +10,8 @@ function InventoryManagement() {
   const [transactions, setTransactions] = useState([]);
   const [showItemModal, setShowItemModal] = useState(false);
   const [showTransactionModal, setShowTransactionModal] = useState(false);
+  const [showDetailsModal, setShowDetailsModal] = useState(false);
+  const [selectedItem, setSelectedItem] = useState(null);
   const [newItem, setNewItem] = useState({
     name: '',
     category: 'housekeeping',
@@ -89,7 +91,6 @@ function InventoryManagement() {
     if (
       !newItem.name ||
       newItem.currentStock < 0 ||
-      // newItem.minStock < 0 ||
       newItem.unitPrice < 0
     ) {
       setError('Please fill in all fields with valid values.');
@@ -110,7 +111,7 @@ function InventoryManagement() {
         category: 'housekeeping',
         unit: 'pieces',
         currentStock: '',
-        // minStock: '',
+        minStock: '',
         unitPrice: '',
       });
       setEditItemId(null);
@@ -123,15 +124,22 @@ function InventoryManagement() {
     setNewItem(item);
     setEditItemId(item.id);
     setShowItemModal(true);
+    setShowDetailsModal(false);
   };
 
   const handleDeleteItem = async (itemId) => {
     if (!window.confirm('Are you sure you want to delete this item?')) return;
     try {
       await remove(ref(db, `atithi-connect/Branches/${branchId}/Inventory/Items/${itemId}`));
+      setShowDetailsModal(false);
     } catch (err) {
       setError('Failed to delete item.');
     }
+  };
+
+  const handleShowDetails = (item) => {
+    setSelectedItem(item);
+    setShowDetailsModal(true);
   };
 
   const handleAddTransaction = async (e) => {
@@ -216,7 +224,7 @@ function InventoryManagement() {
             item.category,
             item.unit,
             item.currentStock,
-            // item.minStock,
+            item.minStock,
             item.unitPrice,
             (item.currentStock * item.unitPrice).toFixed(2),
           ]
@@ -265,8 +273,6 @@ function InventoryManagement() {
         </div>
       )}
       {error && <div className="inventory-management-error">{error}</div>}
-
-      {/* <h2 className="inventory-management-title">Inventory Management</h2> */}
 
       <div className="inventory-management-tabs">
         <button
@@ -321,48 +327,61 @@ function InventoryManagement() {
           >
             Add New Item
           </button>
-          <div className="inventory-management-items-table">
-            <div className="inventory-management-table-header">
-              <div>Name</div>
-              <div>Category</div>
-              <div>Unit</div>
-              <div>Stock</div>
-              <div>Unit Price</div>
-              <div>Value</div>
-              <div>Actions</div>
-            </div>
-            {filteredItems.map((item) => (
-              <div
-                key={item.id}
-                className={`inventory-management-table-row ${
-                  item.currentStock <= item.minStock ? 'low-stock' : ''
-                }`}
-              >
-                <div>{item.name}</div>
-                <div>{item.category}</div>
-                <div>{item.unit}</div>
-                <div>{item.currentStock}</div>
-                {/* <div>{item.minStock}</div> */}
-                <div>{formatCurrency(item.unitPrice)}</div>
-                <div>{formatCurrency(item.currentStock * item.unitPrice)}</div>
-                <div className="inventory-management-actions">
-                  <button
-                    onClick={() => handleEditItem(item)}
-                    className="inventory-management-edit-btn"
-                    aria-label={`Edit ${item.name}`}
+          <div className="inventory-management-table-wrapper">
+            <table className="inventory-management-items-table">
+              <thead>
+                <tr className="inventory-management-table-header">
+                  <th>Name</th>
+                  <th>Category</th>
+                  <th>Unit</th>
+                  <th>Stock</th>
+                  <th>Unit Price</th>
+                  <th>Value</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredItems.map((item) => (
+                  <tr
+                    key={item.id}
+                    className={`inventory-management-table-row ${
+                      item.currentStock <= item.minStock ? 'low-stock' : ''
+                    }`}
+                    onClick={() => handleShowDetails(item)}
+                    style={{ cursor: 'pointer' }}
                   >
-                    Edit
-                  </button>
-                  <button
-                    onClick={() => handleDeleteItem(item.id)}
-                    className="inventory-management-delete-btn"
-                    aria-label={`Delete ${item.name}`}
-                  >
-                    X
-                  </button>
-                </div>
-              </div>
-            ))}
+                    <td>{item.name}</td>
+                    <td>{item.category}</td>
+                    <td>{item.unit}</td>
+                    <td>{item.currentStock}</td>
+                    <td>{formatCurrency(item.unitPrice)}</td>
+                    <td>{formatCurrency(item.currentStock * item.unitPrice)}</td>
+                    <td className="inventory-management-actions">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleEditItem(item);
+                        }}
+                        className="inventory-management-edit-btn"
+                        aria-label={`Edit ${item.name}`}
+                      >
+                        Edit
+                      </button>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDeleteItem(item.id);
+                        }}
+                        className="inventory-management-delete-btn"
+                        aria-label={`Delete ${item.name}`}
+                      >
+                        X
+                      </button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -376,25 +395,31 @@ function InventoryManagement() {
           >
             Record Transaction
           </button>
-          <div className="inventory-management-transactions-table">
-            <div className="inventory-management-table-header">
-              <div>Date</div>
-              <div>Item</div>
-              <div>Type</div>
-              <div>Quantity</div>
-              <div>Reason</div>
-              <div>Staff</div>
-            </div>
-            {filteredTransactions.map((transaction) => (
-              <div key={transaction.id} className="inventory-management-table-row">
-                <div>{formatDateTime(transaction.date)}</div>
-                <div>{transaction.itemName}</div>
-                <div>{transaction.type === 'stock-in' ? 'Stock In' : 'Stock Out'}</div>
-                <div>{transaction.quantity}</div>
-                <div>{transaction.reason}</div>
-                <div>{transaction.staff}</div>
-              </div>
-            ))}
+          <div className="inventory-management-table-wrapper">
+            <table className="inventory-management-transactions-table">
+              <thead>
+                <tr className="inventory-management-table-header">
+                  <th>Date</th>
+                  <th>Item</th>
+                  <th>Type</th>
+                  <th>Quantity</th>
+                  <th>Reason</th>
+                  <th>Staff</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredTransactions.map((transaction) => (
+                  <tr key={transaction.id} className="inventory-management-table-row">
+                    <td>{formatDateTime(transaction.date)}</td>
+                    <td>{transaction.itemName}</td>
+                    <td>{transaction.type === 'stock-in' ? 'Stock In' : 'Stock Out'}</td>
+                    <td>{transaction.quantity}</td>
+                    <td>{transaction.reason}</td>
+                    <td>{transaction.staff}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
       )}
@@ -420,23 +445,29 @@ function InventoryManagement() {
           </div>
           <div className="inventory-management-low-stock-report">
             <h4>Low Stock Alerts</h4>
-            <div className="inventory-management-low-stock-table">
-              <div className="inventory-management-table-header">
-                <div>Name</div>
-                <div>Category</div>
-                <div>Current Stock</div>
-                {/* <div>Min Stock</div> */}
-              </div>
-              {items
-                .filter((item) => item.currentStock <= item.minStock)
-                .map((item) => (
-                  <div key={item.id} className="inventory-management-table-row low-stock">
-                    <div>{item.name}</div>
-                    <div>{item.category}</div>
-                    <div>{item.currentStock}</div>
-                    {/* <div>{item.minStock}</div> */}
-                  </div>
-                ))}
+            <div className="inventory-management-table-wrapper">
+              <table className="inventory-management-low-stock-table">
+                <thead>
+                  <tr className="inventory-management-table-header">
+                    <th>Name</th>
+                    <th>Category</th>
+                    <th>Current Stock</th>
+                    <th>Min Stock</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {items
+                    .filter((item) => item.currentStock <= item.minStock)
+                    .map((item) => (
+                      <tr key={item.id} className="inventory-management-table-row low-stock">
+                        <td>{item.name}</td>
+                        <td>{item.category}</td>
+                        <td>{item.currentStock}</td>
+                        <td>{item.minStock}</td>
+                      </tr>
+                    ))}
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
@@ -492,29 +523,27 @@ function InventoryManagement() {
                   value={newItem.currentStock}
                   onChange={(e) =>
                     setNewItem({ ...newItem, currentStock: Number(e.target.value) })
-                  }                 
+                  }
                   required
                   aria-required="true"
                 />
               </div>
-              {/* <div className="inventory-management-form-group">
+              <div className="inventory-management-form-group">
                 <label>Minimum Stock *</label>
                 <input
                   type="number"
                   value={newItem.minStock}
                   onChange={(e) => setNewItem({ ...newItem, minStock: Number(e.target.value) })}
-                 
                   required
                   aria-required="true"
                 />
-              </div> */}
+              </div>
               <div className="inventory-management-form-group">
                 <label>Unit Price (₹) *</label>
                 <input
                   type="number"
                   value={newItem.unitPrice}
                   onChange={(e) => setNewItem({ ...newItem, unitPrice: Number(e.target.value) })}
-                
                   step="0.01"
                   required
                   aria-required="true"
@@ -531,7 +560,7 @@ function InventoryManagement() {
                       category: 'housekeeping',
                       unit: 'pieces',
                       currentStock: '',
-                      // minStock: '',
+                      minStock: '',
                       unitPrice: '',
                     });
                   }}
@@ -652,6 +681,67 @@ function InventoryManagement() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {showDetailsModal && selectedItem && (
+        <div className="inventory-management-modal">
+          <div className="inventory-management-modal-content">
+            <h3>Item Details</h3>
+            <div className="inventory-management-form">
+              <div className="inventory-management-form-group">
+                <label>Name</label>
+                <p>{selectedItem.name}</p>
+              </div>
+              <div className="inventory-management-form-group">
+                <label>Category</label>
+                <p>{selectedItem.category}</p>
+              </div>
+              <div className="inventory-management-form-group">
+                <label>Unit</label>
+                <p>{selectedItem.unit}</p>
+              </div>
+              <div className="inventory-management-form-group">
+                <label>Current Stock</label>
+                <p>{selectedItem.currentStock}</p>
+              </div>
+              <div className="inventory-management-form-group">
+                <label>Minimum Stock</label>
+                <p>{selectedItem.minStock}</p>
+              </div>
+              <div className="inventory-management-form-group">
+                <label>Unit Price</label>
+                <p>{formatCurrency(selectedItem.unitPrice)}</p>
+              </div>
+              <div className="inventory-management-form-group">
+                <label>Total Value</label>
+                <p>{formatCurrency(selectedItem.currentStock * selectedItem.unitPrice)}</p>
+              </div>
+            </div>
+            <div className="inventory-management-form-actions">
+              <button
+                onClick={() => setShowDetailsModal(false)}
+                className="inventory-management-cancel-btn"
+                aria-label="Close"
+              >
+                Close
+              </button>
+              <button
+                onClick={() => handleEditItem(selectedItem)}
+                className="inventory-management-edit-btn"
+                aria-label={`Edit ${selectedItem.name}`}
+              >
+                Edit
+              </button>
+              <button
+                onClick={() => handleDeleteItem(selectedItem.id)}
+                className="inventory-management-delete-btn"
+                aria-label={`Delete ${selectedItem.name}`}
+              >
+                Delete
+              </button>
+            </div>
           </div>
         </div>
       )}

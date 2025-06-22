@@ -14,14 +14,15 @@ import {
   FaChevronDown,
   FaSearch
 } from 'react-icons/fa';
-import { ref, get } from 'firebase/database'; // ✅ Realtime Database
-import { db } from '../firebase/config'; // ✅ Your initialized DB
-import '../styles/Dashboard.css'; // Import your CSS styles
+import { ref, get } from 'firebase/database';
+import { getAuth, signOut } from 'firebase/auth';
+import { db } from '../firebase/config';
+import '../styles/Dashboard.css';
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [organizationsCount, setOrganizationsCount] = useState(0);
-  const [unreadNotifications, setUnreadNotifications] = useState(3);
+  const [unreadNotifications, setUnreadNotifications] = useState(7);
   const [mobileView, setMobileView] = useState(false);
   const [userMenuOpen, setUserMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
@@ -60,6 +61,17 @@ function Dashboard() {
     }
     fetchCount();
   }, []);
+
+  const handleSignOut = async () => {
+    const auth = getAuth();
+    try {
+      await signOut(auth);
+      localStorage.clear(); // Clear all localStorage
+      navigate('/login', { replace: true }); // Force redirect
+    } catch (error) {
+      console.error('Sign-out error:', error.message);
+    }
+  };
 
   const currentPath = location.pathname;
 
@@ -283,7 +295,7 @@ function Dashboard() {
                       Account Settings
                     </button>
                     <div className="dropdown-divider" />
-                    <button className="dropdown-item danger">
+                    <button className="dropdown-item danger" onClick={handleSignOut}>
                       <FaSignOutAlt />
                       Sign Out
                     </button>

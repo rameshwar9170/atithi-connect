@@ -48,7 +48,7 @@ function BranchHome() {
       </div> */}
 
       {/* Services Section */}
-      <div className="services-section">
+      {/* <div className="services-section">
         <h2 className="section-title">Branch Management Services</h2>
         <div className="services-grid">
           {services.map((service, index) => (
@@ -62,7 +62,7 @@ function BranchHome() {
             </div>
           ))}
         </div>
-      </div>
+      </div> */}
     </div>
   );
 }

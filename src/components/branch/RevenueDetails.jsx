@@ -294,7 +294,7 @@ const RevenueDetails = () => {
 
     return (
         <div className="RevenueDetails-container">
-            <h2 className="RevenueDetails-title">Revenue Details</h2>
+            {/* <h2 className="RevenueDetails-title">Revenue Details</h2> */}
             {error && <div className="RevenueDetails-error">{error}</div>}
             <div className="RevenueDetails-filter-bar">
                 <select

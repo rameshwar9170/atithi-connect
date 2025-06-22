@@ -13,24 +13,26 @@
 }
 
 .RevenueDetails-container {
-   width: 100%;
+    width: 100%;
     margin: 2rem auto;
     padding: 2rem;
     background-color: #ffffff;
     border-radius: 16px;
     box-shadow: var(--RevenueDetails-shadow);
     font-family: 'Inter', sans-serif;
+    max-width: 100%;
+    overflow-x: hidden;
 }
 
 .RevenueDetails-title {
     font-size: 2.25rem;
     font-weight: 700;
-    color: var(--RevenueDetails-primary);
+    color: var(--RevenueDetails-text);
     text-align: center;
     margin-bottom: 2rem;
-    background: var(--RevenueDetails-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    /* background: var(--RevenueDetails-gradient); */
+    /* -webkit-background-clip: text; */
+    /* -webkit-text-fill-color: transparent; */
 }
 
 .RevenueDetails-error {
@@ -62,6 +64,7 @@
     color: var(--RevenueDetails-text);
     background-color: #ffffff;
     transition: var(--RevenueDetails-transition);
+    width: 100%;
 }
 
 .RevenueDetails-filter-input:focus {
@@ -74,29 +77,33 @@
     display: flex;
     gap: 0.5rem;
 }
+
 .RevenueDetails-pagination {
     display: flex;
     align-items: center;
-    justify-content: right;
+    justify-content: flex-end;
     margin-top: 1rem;
     gap: 1rem;
-}.RevenueDetails-button {
+}
+
+.RevenueDetails-button {
     padding: 0.5rem 1rem;
-    background-color: #1a3a8a; /* Active button color (blue) */
+    background-color: #1a3a8a;
     color: #fff;
     border: none;
     border-radius: 4px;
     cursor: pointer;
     font-size: 14px;
     transition: background-color 0.2s;
+    min-width: 3rem; /* Touch-friendly */
 }
 
 .RevenueDetails-button:hover:not(:disabled) {
-    background-color: #2b4aa0; /* Hover color for active buttons */
+    background-color: #2b4aa0;
 }
 
 .RevenueDetails-button:disabled {
-    background-color: #999999; /* Distinct gray color for disabled buttons */
+    background-color: #999999;
     cursor: not-allowed;
 }
 
@@ -122,7 +129,7 @@
 }
 
 .RevenueDetails-summary {
-    display: flex;
+    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
     gap: 2rem;
     margin-bottom: 2rem;
@@ -168,20 +175,19 @@
     100% { transform: rotate(360deg); }
 }
 
+.RevenueDetails-table-wrapper {
+    overflow-x: auto;
+    border-radius: 12px;
+    margin-bottom: 1rem;
+}
+
 .RevenueDetails-table {
     width: 100%;
     border-collapse: collapse;
     background-color: #ffffff;
     border-radius: 12px;
-    overflow: hidden;
     box-shadow: var(--RevenueDetails-shadow);
 }
-/* .evenueDetails-table thead {
-    background-color: var(--RevenueDetails-primary);
-    color: #ffffff;
-    font-weight: 600;
-    padding: 1rem;
-} */
 
 .RevenueDetails-table th,
 .RevenueDetails-table td {
@@ -216,64 +222,6 @@
     transform: translateY(-2px);
 }
 
-.RevenueDetails-items {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-}
-
-.RevenueDetails-items li {
-    margin-bottom: 0.5rem;
-    font-size: 0.95rem;
-}
-
-@media (max-width: 1024px) {
-    .RevenueDetails-container {
-        padding: 1.5rem;
-    }
-
-    .RevenueDetails-filter-bar {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (max-width: 768px) {
-    .RevenueDetails-title {
-        font-size: 1.75rem;
-    }
-
-    .RevenueDetails-summary {
-        grid-template-columns: 1fr;
-    }
-
-    .RevenueDetails-table th,
-    .RevenueDetails-table td {
-        padding: 0.75rem;
-        font-size: 0.9rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .RevenueDetails-container {
-        padding: 1rem;
-    }
-
-    .RevenueDetails-filter-bar {
-        padding: 1rem;
-    }
-
-    .RevenueDetails-export-buttons {
-        flex-direction: column;
-    }
-
-    .RevenueDetails-export-button {
-        width: 100%;
-    }
-
-    .RevenueDetails-table {
-        font-size: 0.85rem;
-    }
-}
 .RevenueDetails-items-cell {
     position: relative;
 }
@@ -286,7 +234,7 @@
 .RevenueDetails-items-popup {
     display: none;
     position: absolute;
-    bottom: 100%; /* Changed from top: 100% to position above */
+    bottom: 100%;
     left: 0;
     background-color: #fff;
     border: 1px solid #ccc;
@@ -311,4 +259,354 @@
 .RevenueDetails-items li {
     margin-bottom: 5px;
     font-size: 14px;
+}
+
+/* Responsive Design for All Devices */
+@media (max-width: 1200px) {
+    .RevenueDetails-container {
+        max-width: 95%;
+        padding: 1.5rem;
+    }
+
+    .RevenueDetails-summary {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 1.5rem;
+        padding: 1rem;
+    }
+
+    .RevenueDetails-filter-bar {
+        grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+        gap: 0.75rem;
+    }
+}
+
+@media (max-width: 1024px) {
+    .RevenueDetails-title {
+        font-size: 2rem;
+    }
+
+    .RevenueDetails-filter-bar {
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        padding: 1rem;
+    }
+
+    .RevenueDetails-filter-input {
+        font-size: 0.9rem;
+        padding: 0.625rem;
+    }
+
+    .RevenueDetails-table th,
+    .RevenueDetails-table td {
+        padding: 0.9rem;
+        font-size: 0.9rem;
+        min-width: 100px;
+    }
+
+    .RevenueDetails-items-popup {
+        min-width: 180px;
+        max-width: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .RevenueDetails-title {
+        font-size: 1.75rem;
+        margin-bottom: 1.25rem;
+    }
+
+    .RevenueDetails-container {
+        max-width: 100%;
+        padding: 1rem;
+        margin: 1rem auto;
+    }
+
+    .RevenueDetails-filter-bar {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .RevenueDetails-filter-input {
+        font-size: 0.875rem;
+        padding: 0.625rem;
+    }
+
+    .RevenueDetails-export-buttons {
+        flex-direction: column;
+        gap: 0.75rem;
+        width: 100%;
+    }
+
+    .RevenueDetails-export-button {
+        width: 100%;
+        padding: 0.75rem;
+        font-size: 0.875rem;
+    }
+
+    .RevenueDetails-summary {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        padding: 0.75rem;
+    }
+
+    .RevenueDetails-summary p {
+        font-size: 0.95rem;
+    }
+
+    .RevenueDetails-table {
+        min-width: 600px; /* Ensure scrollable */
+    }
+
+    .RevenueDetails-table th,
+    .RevenueDetails-table td {
+        padding: 0.75rem;
+        font-size: 0.875rem;
+        min-width: 90px;
+    }
+
+    .RevenueDetails-pagination {
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        justify-content: center;
+    }
+
+    .RevenueDetails-button {
+        font-size: 0.875rem;
+        padding: 0.5rem 1rem;
+    }
+
+    .RevenueDetails-items-popup {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        min-width: 160px;
+        max-width: 90vw;
+        font-size: 0.875rem;
+        padding: 0.75rem;
+        z-index: 1000;
+    }
+
+    .RevenueDetails-items li {
+        font-size: 0.875rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .RevenueDetails-title {
+        font-size: 1.5rem;
+        margin-bottom: 1rem;
+    }
+
+    .RevenueDetails-container {
+        padding: 0.75rem;
+        margin: 0.5rem auto;
+    }
+
+    .RevenueDetails-error {
+        font-size: 0.875rem;
+        padding: 0.75rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .RevenueDetails-filter-bar {
+        gap: 0.5rem;
+        padding: 0.75rem;
+    }
+
+    .RevenueDetails-filter-input {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+
+    .RevenueDetails-export-button {
+        font-size: 0.75rem;
+        padding: 0.625rem;
+    }
+
+    .RevenueDetails-summary {
+        gap: 0.75rem;
+        padding: 0.75rem;
+    }
+
+    .RevenueDetails-summary p {
+        font-size: 0.875rem;
+    }
+
+    .RevenueDetails-table th,
+    .RevenueDetails-table td {
+        padding: 0.625rem;
+        font-size: 0.75rem;
+        min-width: 80px;
+    }
+
+    .RevenueDetails-button {
+        font-size: 0.75rem;
+        padding: 0.375rem 0.75rem;
+    }
+
+    .RevenueDetails-items-popup {
+        min-width: 140px;
+        max-width: 85vw;
+        font-size: 0.75rem;
+        padding: 0.5rem;
+    }
+
+    .RevenueDetails-items li {
+        font-size: 0.75rem;
+    }
+
+    .RevenueDetails-loading {
+        font-size: 1.125rem;
+        padding: 1.5rem;
+    }
+
+    .RevenueDetails-spinner {
+        width: 1.5rem;
+        height: 1.5rem;
+        border-width: 3px;
+    }
+}
+
+@media (max-width: 480px) {
+    .RevenueDetails-title {
+        font-size: 1.25rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .RevenueDetails-container {
+        padding: 0.5rem;
+        margin: 0.25rem auto;
+        border-radius: 8px;
+    }
+
+    .RevenueDetails-error {
+        font-size: 0.75rem;
+        padding: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .RevenueDetails-filter-bar {
+        gap: 0.375rem;
+        padding: 0.5rem;
+    }
+
+    .RevenueDetails-filter-input {
+        font-size: 0.6875rem;
+        padding: 0.375rem;
+    }
+
+    .RevenueDetails-export-button {
+        font-size: 0.6875rem;
+        padding: 0.5rem;
+    }
+
+    .RevenueDetails-summary {
+        gap: 0.5rem;
+        padding: 0.5rem;
+    }
+
+    .RevenueDetails-summary p {
+        font-size: 0.75rem;
+    }
+
+    .RevenueDetails-table th,
+    .RevenueDetails-table td {
+        padding: 0.5rem;
+        font-size: 0.6875rem;
+        min-width: 70px;
+    }
+
+    .RevenueDetails-button {
+        font-size: 0.6875rem;
+        padding: 0.375rem 0.625rem;
+        min-width: 2.5rem;
+    }
+
+    .RevenueDetails-items-popup {
+        min-width: 120px;
+        max-width: 80vw;
+        font-size: 0.6875rem;
+        padding: 0.375rem;
+    }
+
+    .RevenueDetails-items li {
+        font-size: 0.6875rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .RevenueDetails-loading {
+        font-size: 1rem;
+        padding: 1rem;
+    }
+
+    .RevenueDetails-spinner {
+        width: 1.25rem;
+        height: 1.25rem;
+        border-width: 2px;
+    }
+}
+
+@media (min-width: 1400px) {
+    .RevenueDetails-container {
+        max-width: 1200px;
+        padding: 2.5rem;
+    }
+
+    .RevenueDetails-title {
+        font-size: 2.5rem;
+    }
+
+    .RevenueDetails-filter-bar {
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 1.25rem;
+        padding: 2rem;
+    }
+
+    .RevenueDetails-filter-input {
+        font-size: 1.1rem;
+        padding: 0.85rem;
+    }
+
+    .RevenueDetails-export-button {
+        padding: 0.85rem 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .RevenueDetails-summary {
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 2.5rem;
+        padding: 2rem;
+    }
+
+    .RevenueDetails-summary p {
+        font-size: 1.2rem;
+    }
+
+    .RevenueDetails-table th,
+    .RevenueDetails-table td {
+        padding: 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .RevenueDetails-button {
+        font-size: 15px;
+        padding: 0.6rem 1.2rem;
+    }
+
+    .RevenueDetails-items-popup {
+        min-width: 220px;
+        max-width: 350px;
+        font-size: 15px;
+    }
+}
+
+/* Prevent horizontal overflow globally */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    overflow-x: hidden;
 }

@@ -15,6 +15,7 @@
   border-radius: 15px;
   border-bottom: 1px solid #e9ecef;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  overflow: hidden;
 }
 
 .restaurant-tables-title {
@@ -29,21 +30,20 @@
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
   max-width: 100%;
+  padding: 8px;
 }
 
 .restaurant-table-card {
   background: white;
-   /* border: 1px solid #e9ecef; */
   border-radius: 12px;
   padding: 10px;
-  
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   text-align: center;
   cursor: pointer;
   transition: all 0.2s ease;
   position: relative;
-  
   border-left: 3px solid transparent;
+  margin: 0;
 }
 
 .restaurant-table-card:hover {
@@ -64,7 +64,6 @@
 .restaurant-table-card.table-selected {
   border-color: #007bff;
   background: #f0f8ff;
-  /* box-shadow: 0 0 0 7px rgba(0, 123, 255, 0.1); */
 }
 
 .restaurant-table-number {
@@ -94,11 +93,9 @@
 
 /* Main Content Area */
 .orders-main-content {
- margin-top: 15px;
- margin-bottom: 15px;
+  margin: 15px;
   padding: 24px;
   background: white;
-
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
@@ -185,7 +182,7 @@
 
 .order-table-header {
   display: grid;
-  grid-template-columns: 2fr 1fr 1.8fr 1fr 0.5fr; /* Increased space for Quantity */
+  grid-template-columns: 2fr 1fr 1.8fr 1fr 0.5fr;
   gap: 16px;
   padding: 16px;
   background: #f8f9fa;
@@ -196,13 +193,12 @@
 
 .order-table-row {
   display: grid;
-  grid-template-columns: 2fr 1fr 1.8fr 1fr 0.5fr; /* Match header */
+  grid-template-columns: 2fr 1fr 1.8fr 1fr 0.5fr;
   gap: 16px;
   padding: 16px;
   border-bottom: 1px solid #f1f3f4;
   align-items: center;
 }
-
 
 .order-table-row:last-child {
   border-bottom: none;
@@ -222,6 +218,7 @@
 .quantity-controls {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
 .quantity-btn {
@@ -238,14 +235,6 @@
   font-weight: 600;
   transition: all 0.2s ease;
 }
-
-.quantity-value {
-  width: 24px;
-  text-align: center;
-  font-weight: 600;
-  color: #212529;
-}
-
 
 .quantity-btn:hover {
   background: #f8f9fa;
@@ -438,7 +427,8 @@
 }
 
 /* Input Styling (Shared) */
-.bill-form-input {
+.bill-form-input,
+.bill-form-input-phone {
   padding: 12px 16px;
   border: 2px solid #e9ecef;
   border-radius: 8px;
@@ -447,17 +437,11 @@
   width: 100%;
   box-sizing: border-box;
   transition: border-color 0.2s ease;
-  appearance: none;
-}
-.bill-form-input-phone {
-  font-family: inherit;
-  width: 100%;
-  box-sizing: border-box;
-  transition: border-color 0.2s ease;
 }
 
 /* Focus Style */
-.bill-form-input:focus {
+.bill-form-input:focus,
+.bill-form-input-phone:focus {
   outline: none;
   border-color: #007bff;
 }
@@ -469,19 +453,16 @@
   justify-content: flex-end;
   margin-top: 8px;
   flex-wrap: wrap;
-  
-  
 }
 
-
 .bill-cancel-btn,
-.bill-submit-btn {
+.bill-submit-btn,
+.bill-skip-btn {
   padding: 12px 24px;
-  
   border: none;
   border-radius: 8px;
   font-size: 14px;
-  font-weight: 500;
+  font-weight:500;
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -503,22 +484,13 @@
 .bill-submit-btn:hover {
   background: #0056b3;
 }
+
 .bill-skip-btn {
-  /* background-color: #ff9800; orange tone to differentiate */
   background: #6c757d;
-  color: #fff;
-  border: none;
-  padding: 10px 18px;
-  font-size: 14px;
-  font-weight: 500;
-  border-radius: 8px;
-  cursor: pointer;
-  
-  transition: background-color 0.3s ease;
+  color: white;
 }
 
 .bill-skip-btn:hover {
- 
   background: #000000;
 }
 
@@ -537,23 +509,125 @@
 
 .payment-option input[type="radio"] {
   margin-right: 6px;
-  accent-color: #1e90ff; /* Matches primary button color */
+  accent-color: #1e90ff;
 }
 
+.table-container {
+  position: relative;
+  display: inline-block;
+}
 
+/* Temporary table styling */
+.table-temporary {
+  border: 2px dashed #ff9800 !important;
+  background: linear-gradient(135deg, #fff3e0, #ffcc80) !important;
+}
+
+.table-temporary .restaurant-table-number {
+  color: #e65100;
+  font-weight: bold;
+}
+
+.temp-indicator {
+  font-size: 0.8em;
+  color: #ff5722;
+  font-style: italic;
+}
+
+/* Add subtable button */
+.add-subtable-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: #4caf50;
+  color: white;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+  z-index: 10;
+}
+
+.add-subtable-btn:hover {
+  background: #45a049;
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
+
+/* Delete temporary table button */
+.delete-temp-table-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: #f44336;
+  color: white;
+  border: none;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  transition: all 0.2s ease;
+  z-index: 10;
+  line-height: 1;
+}
+
+.delete-temp-table-btn:hover {
+  background: #d32f2f;
+  transform: scale(1.1);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.3);
+}
 
 /* Responsive Design */
-@media (max-width: 768px) {
+@media (max-width: 1024px) {
   .restaurant-tables-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 12px;
   }
-  
+
+  .selected-table-title {
+    font-size: 22px;
+  }
+
+  .menu-search-container {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .restaurant-tables-grid {
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    padding: 6px;
+  }
+
+  .add-subtable-btn,
+  .delete-temp-table-btn {
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    top: 3px;
+    right: 3px;
+  }
+
   .orders-main-content {
-    margin: 12px;
+    margin: 10px;
     padding: 16px;
   }
-  
+
   .order-table-header,
   .order-table-row {
     grid-template-columns: 2fr 1fr 1.2fr 1fr 0.8fr;
@@ -561,58 +635,173 @@
     padding: 12px;
     font-size: 14px;
   }
-  
+
   .orders-page-footer {
     flex-direction: column;
     gap: 16px;
     text-align: center;
+    padding: 16px;
   }
-  
+
   .generate-bill-btn {
     width: 100%;
+    padding: 12px;
+  }
+
+  .bill-modal-content {
+    max-width: 90%;
+    padding: 24px;
   }
 }
 
 @media (max-width: 480px) {
   .restaurant-tables-grid {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+    padding: 4px;
+  }
+
+  .restaurant-table-card {
+    padding: 8px;
+  }
+
+  .restaurant-table-number {
+    font-size: 16px;
+  }
+
+  .restaurant-table-status {
+    font-size: 12px;
+    padding: 3px 8px;
+  }
+
+  .add-subtable-btn,
+  .delete-temp-table-btn {
+    width: 18px;
+    height: 18px;
+    font-size: 11px;
+    top: 2px;
+    right: 2px;
+  }
+
+  .selected-table-title {
+    font-size: 20px;
+  }
+
+  .menu-search-input {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .menu-search-results {
+    max-height: 150px;
+  }
+
+  .menu-search-item {
+    font-size: 14px;
+    padding: 10px 12px;
   }
 
   .order-table-header,
   .order-table-row {
-    display: grid; /* Ensure it's still a grid */
-    grid-template-columns: 1fr 1fr; /* Adjust columns to avoid vertical stacking */
-    gap: 8px; /* Adjust gap */
+    grid-template-columns: 1.5fr 1fr 1fr 1fr 0.7fr;
+    gap: 6px;
+    padding: 10px;
     font-size: 13px;
-    padding: 8px;
   }
 
-  .order-table-header > div,
-  .order-table-row > div {
-    padding: 4px 0;
-    word-break: break-word;
+  .quantity-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 14px;
   }
 
-  .quantity-controls {
-    justify-content: flex-start;
+  .quantity-value {
+    min-width: 20px;
+    font-size: 14px;
+  }
+
+  .remove-item-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  .empty-order-icon,
+  .no-table-icon {
+    font-size: 40px;
+  }
+
+  .no-table-title {
+    font-size: 18px;
+  }
+
+  .empty-order-message,
+  .no-table-message {
+    font-size: 14px;
+  }
+
+  .clear-all-orders-btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+
+  .total-label-text {
+    font-size: 16px;
+  }
+
+  .total-amount-value {
+    font-size: 20px;
   }
 
   .bill-modal-content {
+    padding: 20px;
     margin: 8px;
-    padding: 24px;
+  }
+
+  .bill-form-label {
+    font-size: 14px;
+  }
+
+  .bill-form-input,
+  .bill-form-input-phone {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+
+  .payment-option {
+    font-size: 13px;
   }
 
   .bill-form-actions {
     flex-direction: column;
+    gap: 8px;
   }
 
   .bill-cancel-btn,
-  .bill-submit-btn {
+  .bill-submit-btn,
+  .bill-skip-btn {
     width: 100%;
+    padding: 10px;
+    font-size: 13px;
   }
 }
-@media (max-width: 480px) {
-    .bill-skip-btn, .bill-submit-btn {
-        width: 100%;
-    }
+
+@media (min-width: 1200px) {
+  .restaurant-tables-grid {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: 20px;
+  }
+
+  .orders-main-content {
+    margin: 20px;
+    padding: 32px;
+  }
+
+  .selected-table-title {
+    font-size: 26px;
+  }
+
+  .generate-bill-btn {
+    padding: 16px 40px;
+  }
 }

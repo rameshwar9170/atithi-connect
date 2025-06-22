@@ -1,26 +1,26 @@
 .staff-container {
   background: #ffffff;
   border-radius: 16px;
-  padding: 20px;
+  padding: 1.25rem; /* 20px to rem */
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
 }
 
 .staff-heading {
-  font-size: 24px;
-  margin-bottom: 20px;
+  font-size: 1.5rem; /* 24px to rem */
+  margin-bottom: 1.25rem; /* 20px to rem */
   color: #333;
 }
 
 .staff-no-records {
   text-align: center;
-  padding: 40px;
+  padding: 2.5rem; /* 40px to rem */
   background-color: #f9f9f9;
   border-radius: 12px;
 }
 
 .staff-add-button {
-  margin: 15px 0;
-  padding: 10px 18px;
+  margin: 0.9375rem 0; /* 15px to rem */
+  padding: 0.625rem 1.125rem; /* 10px 18px to rem */
   background-color: #66bb6a;
   color: white;
   border: none;
@@ -32,25 +32,26 @@
 .staff-add-button.cancel {
   background-color: #dc3545; /* Red */
 }
+
 .staff-form {
   background-color: #f5faff;
-  padding: 20px;
+  padding: 1.25rem; /* 20px to rem */
   border-radius: 12px;
-  margin-bottom: 30px;
+  margin-bottom: 1.875rem; /* 30px to rem */
 }
 
 .staff-form-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-  gap: 15px;
+  gap: 0.9375rem; /* 15px to rem */
 }
 
 .staff-form-grid input,
 .staff-form-grid select {
-  padding: 10px;
+  padding: 0.625rem; /* 10px to rem */
   border-radius: 8px;
   border: 1px solid #ccc;
-  font-size: 14px;
+  font-size: 0.875rem; /* 14px to rem */
 }
 
 .staff-form-grid input:focus,
@@ -61,10 +62,10 @@
 }
 
 .staff-submit-button {
-  margin-top: 16px;
+  margin-top: 1rem; /* 16px to rem */
   background-color: #2b00ff;
   color: white;
-  padding: 12px;
+  padding: 0.75rem; /* 12px to rem */
   border: none;
   border-radius: 8px;
   font-weight: 600;
@@ -73,37 +74,34 @@
 
 .staff-error {
   color: red;
-  margin-top: 10px;
+  margin-top: 0.625rem; /* 10px to rem */
   font-weight: 500;
 }
 
 .staff-table-wrapper {
-  margin-top: 30px;
+  margin-top: 1.875rem; /* 30px to rem */
 }
 
 .staff-table-scroll {
   overflow-x: auto;
   border-radius: 15px;
-  box-shadow: 10px;
-
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Fixed invalid shorthand */
 }
 
 .staff-table {
   width: 100%;
   border-collapse: collapse;
   min-width: 800px;
- 
 }
 
 .staff-table th,
 .staff-table td {
-  padding: 14px 16px;
-  /* border: 1px solid #e0e0e0; */
+  padding: 0.875rem 1rem; /* 14px 16px to rem */
   text-align: left;
 }
 
 .staff-table th {
- background: #023291;
+  background: #023291;
   color: #ffffff;
 }
 
@@ -115,8 +113,139 @@
   background-color: #e53935;
   color: white;
   border: none;
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem; /* 8px 12px to rem */
   border-radius: 6px;
   font-weight: 600;
   cursor: pointer;
+}
+
+/* Media Queries for Responsiveness */
+
+/* Large Tablets/Small Desktops (≤1024px) */
+@media (max-width: 1024px) {
+  .staff-form-grid {
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); /* Smaller min width */
+  }
+
+  .staff-container {
+    padding: 1rem;
+  }
+
+  .staff-table {
+    min-width: 600px; /* Reduce min-width for smaller screens */
+  }
+}
+
+/* Tablets (≤768px) */
+@media (max-width: 768px) {
+  .staff-heading {
+    font-size: 1.25rem; /* Smaller heading */
+  }
+
+  .staff-form-grid {
+    grid-template-columns: 1fr; /* Single column */
+    gap: 0.75rem;
+  }
+
+  .staff-form {
+    padding: 1rem;
+  }
+
+  .staff-add-button,
+  .staff-submit-button,
+  .staff-delete-button {
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+  }
+
+  .staff-table th,
+  .staff-table td {
+    padding: 0.625rem 0.75rem; /* Reduce padding */
+    font-size: 0.875rem; /* Smaller text */
+  }
+
+  .staff-no-records {
+    padding: 1.5rem;
+  }
+}
+
+/* Mobile (≤600px) */
+@media (max-width: 600px) {
+  .staff-container {
+    padding: 0.75rem;
+    border-radius: 8px; /* Smaller radius for compact screens */
+  }
+
+  .staff-heading {
+    font-size: 1.125rem;
+    margin-bottom: 1rem;
+  }
+
+  .staff-form-grid input,
+  .staff-form-grid select {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .staff-add-button,
+  .staff-submit-button,
+  .staff-delete-button {
+    width: 100%; /* Full-width buttons for touch */
+    text-align: center;
+    padding: 0.625rem;
+    font-size: 0.875rem;
+  }
+
+  .staff-form {
+    padding: 0.75rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .staff-table th,
+  .staff-table td {
+    padding: 0.5rem 0.625rem;
+    font-size: 0.75rem; /* Smaller text */
+  }
+
+  .staff-table-scroll {
+    border-radius: 8px; /* Match container */
+  }
+
+  .staff-no-records {
+    padding: 1rem;
+    font-size: 0.875rem;
+  }
+
+  .staff-error {
+    font-size: 0.75rem;
+  }
+}
+
+/* Small Mobile (≤480px) */
+@media (max-width: 480px) {
+  .staff-heading {
+    font-size: 1rem;
+  }
+
+  .staff-form-grid input,
+  .staff-form-grid select {
+    font-size: 0.75rem;
+  }
+
+  .staff-add-button,
+  .staff-submit-button,
+  .staff-delete-button {
+    padding: 0.5rem;
+    font-size: 0.75rem;
+  }
+
+  .staff-table th,
+  .staff-table td {
+    padding: 0.375rem 0.5rem;
+    font-size: 0.6875rem; /* Even smaller text */
+  }
+
+  .staff-table-scroll {
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.1); /* Lighter shadow */
+  }
 }
