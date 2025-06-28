@@ -3,6 +3,7 @@ import { ref, onValue, set, push, update } from 'firebase/database';
 import { db } from '../../firebase/config';
 import './OrdersPage.css';
 
+
 function OrdersPage() {
   const branchId = localStorage.getItem('branchId');
   const [tables, setTables] = useState([]);
@@ -15,6 +16,8 @@ function OrdersPage() {
   const [total, setTotal] = useState(0);
   const [showBillForm, setShowBillForm] = useState(false);
   const [customer, setCustomer] = useState({ name: '', phone: '' });
+  const [tableQuery, setTableQuery] = useState('');
+
 
   useEffect(() => {
     if (!branchId) return;
@@ -362,49 +365,62 @@ function OrdersPage() {
   return (
     <div className="orders-page-container">
       <div className="restaurant-tables-section">
+        <div className="table-search-container">
+  <input
+    type="text"
+    placeholder="🔍 Search table..."
+    value={tableQuery}
+    onChange={(e) => setTableQuery(e.target.value)}
+    className="table-search-input"
+  />
+</div>
         <div className="restaurant-tables-grid">
-          {getAllTables().map(table => (
-            <div key={table.tableId} className="table-container">
-              <div
-                className={`restaurant-table-card ${table.status === 'available' ? 'table-available' : 'table-booked'} ${selectedTable?.tableId === table.tableId ? 'table-selected' : ''} ${table.isTemporary ? 'table-temporary' : ''}`}
-                onClick={() => handleTableSelect(table)}
-              >
-                <div className="restaurant-table-number">
-                  Table {table.tableNumber}
-                  {table.isTemporary && <span className="temp-indicator"> (Temp)</span>}
-                </div>
-                <div className="restaurant-table-status">
-                  {table.status === 'available' ? 'Available' : 'Booked'}
-                </div>
-              </div>
-              
-              {!table.isTemporary && table.status === 'booked' && (
-                <button
-                  className="add-subtable-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    createTempTable(table);
-                  }}
-                  title={`Add subtable for Table ${table.tableNumber}`}
-                >
-                  +
-                </button>
-              )}
-              
-              {table.isTemporary && (
-                <button
-                  className="delete-temp-table-btn"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    deleteTempTable(table.tableId);
-                  }}
-                  title={`Delete temporary table ${table.tableNumber}`}
-                >
-                  ×
-                </button>
-              )}
-            </div>
-          ))}
+      {getAllTables()
+  .filter(table =>
+    table.tableNumber?.toLowerCase().includes(tableQuery.toLowerCase())
+  )
+  .map(table => (
+    <div key={table.tableId} className="table-container">
+      <div
+        className={`restaurant-table-card ${table.status === 'available' ? 'table-available' : 'table-booked'} ${selectedTable?.tableId === table.tableId ? 'table-selected' : ''} ${table.isTemporary ? 'table-temporary' : ''}`}
+        onClick={() => handleTableSelect(table)}
+      >
+        <div className="restaurant-table-number">
+          Table {table.tableNumber}
+          {table.isTemporary && <span className="temp-indicator"> (Temp)</span>}
+        </div>
+        <div className="restaurant-table-status">
+          {table.status === 'available' ? 'Available' : 'Booked'}
+        </div>
+      </div>
+
+      {!table.isTemporary && table.status === 'booked' && (
+        <button
+          className="add-subtable-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            createTempTable(table);
+          }}
+          title={`Add subtable for Table ${table.tableNumber}`}
+        >
+          +
+        </button>
+      )}
+
+      {table.isTemporary && (
+        <button
+          className="delete-temp-table-btn"
+          onClick={(e) => {
+            e.stopPropagation();
+            deleteTempTable(table.tableId);
+          }}
+          title={`Delete temporary table ${table.tableNumber}`}
+        >
+          ×
+        </button>
+      )}
+    </div>
+))}
         </div>
       </div>
 

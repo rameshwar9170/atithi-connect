@@ -194,6 +194,8 @@
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 1rem;
+  margin-left: 12px;
+  margin-right: 12px;
   margin-bottom: 1.5rem;
 }
 
@@ -244,6 +246,7 @@
   background: var(--reports-page-accent);
   color: #ffffff;
   border: none;
+  margin-left: 12px;
   border-radius: 6px;
   font-size: 0.9rem;
   font-weight: 600;
@@ -616,7 +619,9 @@
   display: flex; /* Ensure it's a flex item */
 }
 
-
+.reports-page-actions{
+  width: 370px;
+}
 
   .reports-page-pagination-btn {
     padding: 4px 6px;
@@ -630,7 +635,7 @@
     margin-bottom: 0px;
   }
   .reports-page-table{
-    width: 340px;
+    width: 380px;
     margin: 0;
     padding: 0;
   }

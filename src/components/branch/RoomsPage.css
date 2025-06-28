@@ -4,6 +4,28 @@
     margin: 0;
     padding: 0;
   }
+.room-page-inputs-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 10px 0 20px;
+}
+
+.room-page-input {
+  width: 150px;
+  padding: 8px 12px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
+.room-page-search-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-color: #959494;
+  height: 38px;
+  margin-bottom: 20px;
+}
 
   .rooms-page-container {
     width: 100%;
@@ -27,17 +49,31 @@
     text-align: center;
   }
 
-  .hotel-rooms-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 10px;
-    margin-bottom: 20px;
-  }
+ .hotel-rooms-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  max-height: calc((2 * 112px) + 10px); /* 2 rows + 1 gap */
+  overflow-y: auto;
+  padding: 8px;
+  margin-bottom: 20px;
+}
+
+/* Optional: style scrollbar */
+.hotel-rooms-grid::-webkit-scrollbar {
+  width: 4px;
+}
+.hotel-rooms-grid::-webkit-scrollbar-thumb {
+  background-color: #ccc;
+  border-radius: 4px;
+}
+
 
   .hotel-room-card {
     border-radius: 14px;
     padding-left: 10px;
     padding-right: 10px;
+    height: 100%;
     padding-bottom: 7px;
     padding-top: 5px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -661,10 +697,36 @@
     }
 
     .hotel-rooms-grid {
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 8px;
-    }
-
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 8px;
+  max-height: calc((2 * 152px) + 10px); /* 2 rows + 1 gap */
+  overflow-y: auto;
+  padding: 8px;
+  margin-bottom: 20px;
+}
+.room-page-inputs-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 10px 0 20px;
+}
+.room-page-search-container {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  border-color: #ccc;
+  height: 40px;
+  margin-bottom: 20px;
+}
+.room-page-input {
+  width: 150px;
+  padding: 8px 12px;
+  height: 40px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+}
     .hotel-room-card {
       padding: 8px;
     }

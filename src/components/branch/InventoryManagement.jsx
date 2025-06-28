@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { ref, onValue, set, push, update, remove } from 'firebase/database';
+import { ref, onValue, set, push, update, remove, query, orderByChild, equalTo } from 'firebase/database';
 import { db } from '../../firebase/config';
 import './InventoryManagement.css';
 
@@ -17,7 +17,6 @@ function InventoryManagement() {
     category: 'housekeeping',
     unit: 'pieces',
     currentStock: '',
-    minStock: '',
     unitPrice: '',
   });
   const [newTransaction, setNewTransaction] = useState({
@@ -98,20 +97,51 @@ function InventoryManagement() {
     }
 
     try {
-      const itemRef = editItemId
-        ? ref(db, `atithi-connect/Branches/${branchId}/Inventory/Items/${editItemId}`)
-        : push(ref(db, `atithi-connect/Branches/${branchId}/Inventory/Items`));
-      await set(itemRef, {
-        ...newItem,
-        createdAt: new Date().toISOString(),
+      // Check for existing item by name
+      const itemsRef = ref(db, `atithi-connect/Branches/${branchId}/Inventory/Items`);
+      const itemQuery = query(itemsRef, orderByChild('name'), equalTo(newItem.name));
+      let existingItem = null;
+
+      await new Promise((resolve, reject) => {
+        onValue(itemQuery, (snapshot) => {
+          const data = snapshot.val();
+          if (data) {
+            const itemArray = Object.entries(data).map(([id, item]) => ({ id, ...item }));
+            existingItem = itemArray[0];
+          }
+          resolve();
+        }, { onlyOnce: true }, reject);
       });
+
+      if (existingItem && !editItemId) {
+        // Update existing item's stock
+        const itemRef = ref(db, `atithi-connect/Branches/${branchId}/Inventory/Items/${existingItem.id}`);
+        const updatedStock = Number(existingItem.currentStock) + Number(newItem.currentStock);
+        await update(itemRef, {
+          currentStock: updatedStock,
+          category: newItem.category,
+          unit: newItem.unit,
+          unitPrice: newItem.unitPrice,
+          updatedAt: new Date().toISOString(),
+        });
+      } else {
+        // Add new item or update existing
+        const itemRef = editItemId
+          ? ref(db, `atithi-connect/Branches/${branchId}/Inventory/Items/${editItemId}`)
+          : push(itemsRef);
+        await set(itemRef, {
+          ...newItem,
+          createdAt: editItemId ? newItem.createdAt : new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+        });
+      }
+
       setShowItemModal(false);
       setNewItem({
         name: '',
         category: 'housekeeping',
         unit: 'pieces',
         currentStock: '',
-        minStock: '',
         unitPrice: '',
       });
       setEditItemId(null);
@@ -121,7 +151,14 @@ function InventoryManagement() {
   };
 
   const handleEditItem = (item) => {
-    setNewItem(item);
+    setNewItem({
+      name: item.name,
+      category: item.category,
+      unit: item.unit,
+      currentStock: item.currentStock,
+      unitPrice: item.unitPrice,
+      createdAt: item.createdAt,
+    });
     setEditItemId(item.id);
     setShowItemModal(true);
     setShowDetailsModal(false);
@@ -215,7 +252,7 @@ function InventoryManagement() {
   const exportToCSV = (data, filename) => {
     const headers =
       filename === 'inventory'
-        ? ['Item Name', 'Category', 'Unit', 'Current Stock', 'Min Stock', 'Unit Price', 'Value']
+        ? ['Item Name', 'Category', 'Unit', 'Current Stock', 'Unit Price', 'Value']
         : ['Date', 'Item Name', 'Type', 'Quantity', 'Reason', 'Staff'];
     const rows = data.map((item) =>
       filename === 'inventory'
@@ -224,7 +261,6 @@ function InventoryManagement() {
             item.category,
             item.unit,
             item.currentStock,
-            item.minStock,
             item.unitPrice,
             (item.currentStock * item.unitPrice).toFixed(2),
           ]
@@ -344,9 +380,7 @@ function InventoryManagement() {
                 {filteredItems.map((item) => (
                   <tr
                     key={item.id}
-                    className={`inventory-management-table-row ${
-                      item.currentStock <= item.minStock ? 'low-stock' : ''
-                    }`}
+                    className="inventory-management-table-row"
                     onClick={() => handleShowDetails(item)}
                     style={{ cursor: 'pointer' }}
                   >
@@ -443,33 +477,6 @@ function InventoryManagement() {
               Export Transaction Report
             </button>
           </div>
-          <div className="inventory-management-low-stock-report">
-            <h4>Low Stock Alerts</h4>
-            <div className="inventory-management-table-wrapper">
-              <table className="inventory-management-low-stock-table">
-                <thead>
-                  <tr className="inventory-management-table-header">
-                    <th>Name</th>
-                    <th>Category</th>
-                    <th>Current Stock</th>
-                    <th>Min Stock</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {items
-                    .filter((item) => item.currentStock <= item.minStock)
-                    .map((item) => (
-                      <tr key={item.id} className="inventory-management-table-row low-stock">
-                        <td>{item.name}</td>
-                        <td>{item.category}</td>
-                        <td>{item.currentStock}</td>
-                        <td>{item.minStock}</td>
-                      </tr>
-                    ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
         </div>
       )}
 
@@ -529,16 +536,6 @@ function InventoryManagement() {
                 />
               </div>
               <div className="inventory-management-form-group">
-                <label>Minimum Stock *</label>
-                <input
-                  type="number"
-                  value={newItem.minStock}
-                  onChange={(e) => setNewItem({ ...newItem, minStock: Number(e.target.value) })}
-                  required
-                  aria-required="true"
-                />
-              </div>
-              <div className="inventory-management-form-group">
                 <label>Unit Price (₹) *</label>
                 <input
                   type="number"
@@ -560,7 +557,6 @@ function InventoryManagement() {
                       category: 'housekeeping',
                       unit: 'pieces',
                       currentStock: '',
-                      minStock: '',
                       unitPrice: '',
                     });
                   }}
@@ -705,10 +701,6 @@ function InventoryManagement() {
               <div className="inventory-management-form-group">
                 <label>Current Stock</label>
                 <p>{selectedItem.currentStock}</p>
-              </div>
-              <div className="inventory-management-form-group">
-                <label>Minimum Stock</label>
-                <p>{selectedItem.minStock}</p>
               </div>
               <div className="inventory-management-form-group">
                 <label>Unit Price</label>

@@ -202,7 +202,7 @@ function ReportsPage() {
 
     return (
       <div className="reports-page-report-section">
-        <h3>Sales Report</h3>
+        <h3 style={{margin: '12px',paddingTop: '12px'}}>Sales Report</h3>
         <div className="reports-page-summary">
           <div className="reports-page-card">
             <h4>Total Revenue</h4>
@@ -224,13 +224,13 @@ function ReportsPage() {
           </div>
         </div>
         <div className="reports-page-actions">
-          <button onClick={() => exportToPDF('Sales Report', headers, filteredBills.map((bill) => [
+          {/* <button onClick={() => exportToPDF('Sales Report', headers, filteredBills.map((bill) => [
             formatDate(bill.createdAt),
             bill.customer?.name || 'NA',
             bill.table,
             bill.items.map((item) => `${item.itemName} x${item.quantity}`).join(', '),
             formatCurrency(bill.total),
-          ]))} className="reports-page-export-btn" aria-label="Export Sales to PDF">Export to PDF</button>
+          ]))} className="reports-page-export-btn" aria-label="Export Sales to PDF">Export to PDF</button> */}
           <button
             onClick={() => exportToExcel(filteredBills.map((bill) => ({
               Date: formatDate(bill.createdAt),
@@ -302,7 +302,7 @@ function ReportsPage() {
 
     return (
       <div className="reports-page-report-section">
-        <h3>Bookings Report</h3>
+        <h3 style={{margin: '12px',paddingTop: '12px'}}>Bookings Report</h3>
         <div className="reports-page-summary">
           <div className="reports-page-card">
             <h4>Total Revenue</h4>
@@ -410,7 +410,7 @@ function ReportsPage() {
 
     return (
       <div className="reports-page-report-section">
-        <h3>Inventory Report</h3>
+        <h3 style={{margin: '12px',paddingTop: '12px'}}>Inventory Report</h3>
         <div className="reports-page-summary">
           <div className="reports-page-card">
             <h4>Low Stock Alerts</h4>
@@ -553,7 +553,7 @@ function ReportsPage() {
 
     return (
       <div className="reports-page-report-section">
-        <h3>Staff Report</h3>
+        <h3 style={{margin: '12px',paddingTop: '12px'}}>Staff Report</h3>
         <div className="reports-page-summary">
           <div className="reports-page-card">
             <h4>Total Staff</h4>

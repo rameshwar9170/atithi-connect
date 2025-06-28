@@ -13,6 +13,10 @@ function RoomsPage() {
   const [showBookingForm, setShowBookingForm] = useState(false);
   const [showBookingDetails, setShowBookingDetails] = useState(false);
   const [currentBookingDetails, setCurrentBookingDetails] = useState(null);
+  const [selectedDate, setSelectedDate] = useState(new Date().toISOString().slice(0, 10));
+  const [roomQuery, setRoomQuery] = useState('');
+
+
   const [newGuest, setNewGuest] = useState({
     name: '',
     age: '',
@@ -22,6 +26,7 @@ function RoomsPage() {
     idNumber: '',
     phone: ''
   });
+
   const [bookingDetails, setBookingDetails] = useState({
     checkIn: '',
     checkOut: '',
@@ -32,87 +37,101 @@ function RoomsPage() {
     notes: ''
   });
 
-useEffect(() => {
-  if (!branchId) return;
+  useEffect(() => {
+    if (!branchId) return;
 
-  const branchRef = ref(db, `atithi-connect/Branches/${branchId}`);
-  const unsubscribe = onValue(branchRef, snapshot => {
-    const data = snapshot.val();
-    if (!data) return;
+    const branchRef = ref(db, `atithi-connect/Branches/${branchId}`);
+    const unsubscribe = onValue(branchRef, snapshot => {
+      const data = snapshot.val();
+      if (!data) return;
 
-    // Process rooms data
-    let roomsData = [];
-    if (data.rooms) {
-      if (Array.isArray(data.rooms)) {
-        roomsData = data.rooms.map((room, index) => {
-          if (room && room.roomId) {
-            return {
-              ...room,
-              firebaseIndex: index,
-              status: determineRoomStatus(room.roomId, data.Bookings)
-            };
-          }
-          return null;
-        }).filter(Boolean);
-      } else {
-        roomsData = Object.entries(data.rooms).map(([key, room]) => ({
-          ...room,
-          firebaseKey: key,
-          status: determineRoomStatus(room.roomId, data.Bookings)
-        }));
+      let roomsData = [];
+      if (data.rooms) {
+        if (Array.isArray(data.rooms)) {
+          roomsData = data.rooms.map((room, index) => {
+            if (room && room.roomId) {
+              return {
+                ...room,
+                firebaseIndex: index,
+                status: determineRoomStatus(room.roomId, data.Bookings)
+              };
+            }
+            return null;
+          }).filter(Boolean);
+        } else {
+          roomsData = Object.entries(data.rooms).map(([key, room]) => ({
+            ...room,
+            firebaseKey: key,
+            status: determineRoomStatus(room.roomId, data.Bookings)
+          }));
+        }
       }
-    }
 
-    setRooms(roomsData);
+      // Process active bookings for selected date only
+      const activeBookingsData = {};
+      if (data.Bookings) {
+        const dayStart = new Date(selectedDate + 'T00:00:00');
+        const dayEnd = new Date(selectedDate + 'T23:59:59');
 
-    // Process active bookings
-    let activeBookingsData = {}; // ✅ Declared outside if block
-    if (data.Bookings) {
-      Object.entries(data.Bookings).forEach(([bookingId, booking]) => {
-        if (booking.status === 'active' && isBookingActive(booking)) {
-          activeBookingsData[booking.roomId] = {
-            ...booking,
-            bookingId
-          };
-        } else if (booking.status === 'active' && !isBookingActive(booking)) {
-          // Automatically expire booking if checkout time has passed
-          expireBooking(bookingId, booking);
-        }
-      });
+        Object.entries(data.Bookings).forEach(([bookingId, booking]) => {
+          const checkIn = new Date(booking.checkIn);
+          const checkOut = new Date(booking.checkOut);
+          const overlaps = checkIn <= dayEnd && checkOut >= dayStart;
+
+          if (booking.status === 'active' && overlaps) {
+            activeBookingsData[booking.roomId] = {
+              ...booking,
+              bookingId
+            };
+          } else if (booking.status === 'active' && !isBookingActive(booking)) {
+            expireBooking(bookingId, booking);
+          }
+        });
+      }
+
+      setRooms(
+        roomsData.map(room => ({
+          ...room,
+          status: activeBookingsData[room.roomId] ? 'occupied' : 'available'
+        }))
+      );
+
       setActiveBookings(activeBookingsData);
-    }
 
-    // Initialize room bookings for pending guests
-    setRoomBookings(prev => {
-      const newBookings = { ...prev };
-      roomsData.forEach(room => {
-        const roomId = room.roomId;
-        if (!newBookings[roomId] && !activeBookingsData[roomId]) {
-          const saved = localStorage.getItem(`pending-guests-${roomId}`);
-          newBookings[roomId] = saved ? JSON.parse(saved) : [];
-        }
+      // Initialize roomBookings
+      setRoomBookings(prev => {
+        const updated = { ...prev };
+        roomsData.forEach(room => {
+          const roomId = room.roomId;
+          if (!updated[roomId] && !activeBookingsData[roomId]) {
+            const saved = localStorage.getItem(`pending-guests-${roomId}`);
+            updated[roomId] = saved ? JSON.parse(saved) : [];
+          }
+        });
+        return updated;
       });
-      return newBookings;
     });
-  });
 
-  return () => unsubscribe();
-}, [branchId]);
-
+    return () => unsubscribe();
+  }, [branchId, selectedDate]); // ← Dependency added here
 
   const determineRoomStatus = (roomId, bookings) => {
     if (!bookings) return 'available';
-    
-    const activeBooking = Object.values(bookings).find(booking => 
-      booking.roomId === roomId && 
-      booking.status === 'active' && 
-      isBookingActive(booking)
+    const dayStart = new Date(selectedDate + 'T00:00:00');
+    const dayEnd = new Date(selectedDate + 'T23:59:59');
+
+    const activeBooking = Object.values(bookings).find(
+      booking =>
+        booking.roomId === roomId &&
+        booking.status === 'active' &&
+        new Date(booking.checkIn) <= dayEnd &&
+        new Date(booking.checkOut) >= dayStart
     );
-    
+
     return activeBooking ? 'occupied' : 'available';
   };
 
-  const isBookingActive = (booking) => {
+  const isBookingActive = booking => {
     const now = new Date();
     const checkOut = new Date(booking.checkOut);
     return now < checkOut;
@@ -126,7 +145,6 @@ useEffect(() => {
         actualCheckOut: new Date().toISOString()
       });
 
-      // Update room status
       const room = rooms.find(r => r.roomId === booking.roomId);
       if (room) {
         await updateRoomStatus(room, 0);
@@ -139,25 +157,20 @@ useEffect(() => {
   useEffect(() => {
     if (selectedRoom && !activeBookings[selectedRoom.roomId]) {
       const roomId = selectedRoom.roomId;
-      localStorage.setItem(
-        `pending-guests-${roomId}`, 
-        JSON.stringify(roomBookings[roomId] || [])
-      );
+      localStorage.setItem(`pending-guests-${roomId}`, JSON.stringify(roomBookings[roomId] || []));
     }
   }, [roomBookings, selectedRoom, activeBookings]);
 
-  const handleRoomSelect = (room) => {
+  const handleRoomSelect = room => {
     setSelectedRoom(room);
     setShowGuestForm(false);
     setShowBookingForm(false);
     setShowBookingDetails(false);
 
-    // If room is occupied, show booking details
     if (room.status === 'occupied' && activeBookings[room.roomId]) {
       setCurrentBookingDetails(activeBookings[room.roomId]);
       setShowBookingDetails(true);
     } else {
-      // Load pending guests for available rooms
       const saved = localStorage.getItem(`pending-guests-${room.roomId}`);
       if (saved) {
         setRoomBookings(prev => ({
@@ -169,23 +182,14 @@ useEffect(() => {
   };
 
   const handleAddGuestClick = () => {
-    if (!selectedRoom) {
-      alert('Please select a room first');
-      return;
+    if (!selectedRoom) return alert('Please select a room first');
+    if (selectedRoom.status === 'occupied') return alert('This room is currently occupied');
+
+    const current = roomBookings[selectedRoom.roomId] || [];
+    if (current.length >= selectedRoom.totalBeds) {
+      return alert('No available beds in this room');
     }
 
-    if (selectedRoom.status === 'occupied') {
-      alert('This room is currently occupied');
-      return;
-    }
-    
-    // Check if room has available beds
-    const currentBookings = roomBookings[selectedRoom.roomId] || [];
-    if (currentBookings.length >= selectedRoom.totalBeds) {
-      alert('No available beds in this room');
-      return;
-    }
-    
     setNewGuest({
       name: '',
       age: '',
@@ -198,22 +202,25 @@ useEffect(() => {
     setShowGuestForm(true);
   };
 
-  const handleAddGuest = (e) => {
+  const handleAddGuest = e => {
     e.preventDefault();
-    
+
     const roomId = selectedRoom.roomId;
-    const currentBookings = roomBookings[roomId] || [];
-    
+    const current = roomBookings[roomId] || [];
+
     setRoomBookings(prev => {
-      const updatedBookings = { ...prev };
-      updatedBookings[roomId] = [...currentBookings, {
-        ...newGuest,
-        guestId: Date.now().toString(),
-        addedAt: new Date().toISOString()
-      }];
-      return updatedBookings;
+      const updated = { ...prev };
+      updated[roomId] = [
+        ...current,
+        {
+          ...newGuest,
+          guestId: Date.now().toString(),
+          addedAt: new Date().toISOString()
+        }
+      ];
+      return updated;
     });
-    
+
     setShowGuestForm(false);
   };
 
@@ -232,17 +239,21 @@ useEffect(() => {
       updates[updatePath] = newOccupiedBeds;
       await update(ref(db), updates);
 
-      setRooms(prev => prev.map(r =>
-        r.roomId === room.roomId ? { 
-          ...r, 
-          occupiedBeds: newOccupiedBeds,
-          status: newOccupiedBeds > 0 ? 'occupied' : 'available'
-        } : r
-      ));
+      setRooms(prev =>
+        prev.map(r =>
+          r.roomId === room.roomId
+            ? {
+                ...r,
+                occupiedBeds: newOccupiedBeds,
+                status: newOccupiedBeds > 0 ? 'occupied' : 'available'
+              }
+            : r
+        )
+      );
 
       if (selectedRoom?.roomId === room.roomId) {
-        setSelectedRoom(prev => ({ 
-          ...prev, 
+        setSelectedRoom(prev => ({
+          ...prev,
           occupiedBeds: newOccupiedBeds,
           status: newOccupiedBeds > 0 ? 'occupied' : 'available'
         }));
@@ -253,50 +264,44 @@ useEffect(() => {
     }
   };
 
-  const removeGuest = async (guestId) => {
+  const removeGuest = guestId => {
     if (!selectedRoom) return;
     const roomId = selectedRoom.roomId;
-    const currentBookings = roomBookings[roomId] || [];
-    const remainingGuests = currentBookings.filter(guest => guest.guestId !== guestId);
+    const updated = roomBookings[roomId]?.filter(guest => guest.guestId !== guestId);
 
-    setRoomBookings(prev => {
-      const updatedBookings = { ...prev };
-      updatedBookings[roomId] = remainingGuests;
-      return updatedBookings;
-    });
+    setRoomBookings(prev => ({
+      ...prev,
+      [roomId]: updated
+    }));
   };
 
   const handleCheckout = () => {
     if (!selectedRoom || !roomBookings[selectedRoom.roomId]?.length) {
-      alert('No guests to checkout');
-      return;
+      return alert('No guests to checkout');
     }
-    
-    // Set default dates if not provided
-    const now = new Date();
-    const tomorrow = new Date(now);
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    
+
+    const now = new Date(`${selectedDate}T12:00:00`);
+    const next = new Date(now);
+    next.setDate(now.getDate() + 1);
+
     setBookingDetails(prev => ({
       ...prev,
       checkIn: prev.checkIn || now.toISOString().slice(0, 16),
-      checkOut: prev.checkOut || tomorrow.toISOString().slice(0, 16)
+      checkOut: prev.checkOut || next.toISOString().slice(0, 16)
     }));
-    
+
     setShowBookingForm(true);
   };
 
-  const handleBookingSubmit = async (e) => {
+  const handleBookingSubmit = async e => {
     e.preventDefault();
 
     if (!bookingDetails.checkIn || !bookingDetails.checkOut || !bookingDetails.paymentMode) {
-      alert('Please fill in all required booking details');
-      return;
+      return alert('Please fill in all required booking details');
     }
 
     if (new Date(bookingDetails.checkOut) <= new Date(bookingDetails.checkIn)) {
-      alert('Check-out date must be after check-in date');
-      return;
+      return alert('Check-out date must be after check-in date');
     }
 
     try {
@@ -312,20 +317,18 @@ useEffect(() => {
         totalAmount: bookingDetails.amount,
         balance: bookingDetails.amount - bookingDetails.advance,
         status: 'active',
-        createdAt: new Date().toISOString(),
+        createdAt: new Date().toISOString()
       });
 
-      // Clear pending bookings from state and localStorage
       setRoomBookings(prev => ({
         ...prev,
         [selectedRoom.roomId]: []
       }));
+
       localStorage.removeItem(`pending-guests-${selectedRoom.roomId}`);
 
-      // Update room status to occupied
       await updateRoomStatus(selectedRoom, roomBookings[selectedRoom.roomId].length);
-      
-      // Reset forms
+
       setBookingDetails({
         checkIn: '',
         checkOut: '',
@@ -335,8 +338,8 @@ useEffect(() => {
         paymentMode: '',
         notes: ''
       });
+
       setShowBookingForm(false);
-      
       alert('Booking confirmed successfully!');
     } catch (error) {
       console.error('Error saving booking:', error);
@@ -350,19 +353,20 @@ useEffect(() => {
     }
 
     try {
-      const bookingRef = ref(db, `atithi-connect/Branches/${branchId}/Bookings/${currentBookingDetails.bookingId}`);
+      const bookingRef = ref(
+        db,
+        `atithi-connect/Branches/${branchId}/Bookings/${currentBookingDetails.bookingId}`
+      );
       await update(bookingRef, {
         status: 'completed',
         actualCheckOut: new Date().toISOString(),
         earlyCheckout: true
       });
 
-      // Update room status to available
       await updateRoomStatus(selectedRoom, 0);
-      
       setShowBookingDetails(false);
       setCurrentBookingDetails(null);
-      
+
       alert('Checkout completed successfully!');
     } catch (error) {
       console.error('Error during checkout:', error);
@@ -370,11 +374,30 @@ useEffect(() => {
     }
   };
 
-  const getCurrentBookings = () => {
-    return selectedRoom ? (roomBookings[selectedRoom.roomId] || []) : [];
+  const handleDateChange = (field, value) => {
+    setBookingDetails(prev => {
+      const newDetails = { ...prev, [field]: value };
+
+      if (newDetails.checkIn && newDetails.checkOut) {
+        const checkInDate = new Date(newDetails.checkIn);
+        const checkOutDate = new Date(newDetails.checkOut);
+
+        if (checkOutDate > checkInDate) {
+          const days = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+          const amount = days * (selectedRoom?.pricePerDay || 0);
+          return { ...newDetails, days, amount };
+        }
+      }
+
+      return newDetails;
+    });
   };
 
-  const clearRoomBookings = async () => {
+  const getCurrentBookings = () => {
+    return selectedRoom ? roomBookings[selectedRoom.roomId] || [] : [];
+  };
+
+  const clearRoomBookings = () => {
     if (!selectedRoom || !window.confirm('Are you sure you want to clear all pending bookings for this room?')) {
       return;
     }
@@ -386,78 +409,83 @@ useEffect(() => {
     localStorage.removeItem(`pending-guests-${selectedRoom.roomId}`);
   };
 
-  const handleDateChange = (field, value) => {
-    setBookingDetails(prev => {
-      const newDetails = { ...prev, [field]: value };
-      
-      // Calculate days and amount if both dates are present
-      if (newDetails.checkIn && newDetails.checkOut) {
-        const checkInDate = new Date(newDetails.checkIn);
-        const checkOutDate = new Date(newDetails.checkOut);
-        
-        if (checkOutDate > checkInDate) {
-          const days = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
-          const amount = days * (selectedRoom?.pricePerDay || 0);
-          return { ...newDetails, days, amount };
-        }
-      }
-      
-      return newDetails;
-    });
-  };
-
-  const formatDateTime = (dateString) => {
+  const formatDateTime = dateString => {
     return new Date(dateString).toLocaleString();
   };
 
-  const getRemainingTime = (checkOut) => {
+  const getRemainingTime = checkOut => {
     const now = new Date();
-    const checkOutDate = new Date(checkOut);
-    const diff = checkOutDate - now;
-    
+    const end = new Date(checkOut);
+    const diff = end - now;
+
     if (diff <= 0) return 'Expired';
-    
+
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
     const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-    
-    if (days > 0) return `${days}d ${hours}h remaining`;
-    return `${hours}h remaining`;
+    return days > 0 ? `${days}d ${hours}h remaining` : `${hours}h remaining`;
   };
+
 
   return (
     <div className="rooms-page-container">
       {/* Rooms Section */}
       <div className="hotel-rooms-section">
         {/* <h2 className="hotel-rooms-title">Hotel Rooms</h2> */}
-        <div className="hotel-rooms-grid">
-          {rooms.map(room => (
-            <div
-              key={room.roomId}
-              className={`hotel-room-card ${room.status === 'available' ? 'room-available' : 'room-occupied'} ${selectedRoom?.roomId === room.roomId ? 'room-selected' : ''}`}
-              onClick={() => handleRoomSelect(room)}
-            >
-              <div className="hotel-room-number">Room {room.roomNumber}</div>
-             
-              {/* <div className="hotel-room-beds">
-                Beds: {room.occupiedBeds || 0}/{room.totalBeds}
-              </div> */}
-              <div className="hotel-room-price">
-                 <div className="hotel-room-type">{room.roomType || 'Standard'}</div>
-                ₹{room.pricePerDay || 'NA'}/day
-              </div>
-           {room.status === 'available' && (
-  <div className="hotel-room-status">
-    Available
-  </div>
-)}
 
-              {room.status === 'occupied' && activeBookings[room.roomId] && (
-                <div className="room-time-remaining">
-                  {getRemainingTime(activeBookings[room.roomId].checkOut)}
-                </div>
-              )}
-            </div>
-          ))}
+<div className="room-page-inputs-row">
+  <div className="room-page-search-container">
+    <input
+      type="text"
+      placeholder="🔍 Search room..."
+      value={roomQuery}
+      onChange={(e) => setRoomQuery(e.target.value)}
+      className="room-page-input"
+    />
+  </div>
+
+  <div className="room-page-date-picker-container">
+    <input
+      type="date"
+      value={selectedDate}
+      onChange={(e) => setSelectedDate(e.target.value)}
+      className="room-page-input"
+    />
+  </div>
+</div>
+
+
+        <div className="hotel-rooms-grid">
+       {rooms
+  .filter(room =>
+    room.roomNumber.toLowerCase().includes(roomQuery.toLowerCase())
+  )
+  .map(room => (
+    <div
+      key={room.roomId}
+      className={`hotel-room-card ${room.status === 'available' ? 'room-available' : 'room-occupied'} ${selectedRoom?.roomId === room.roomId ? 'room-selected' : ''}`}
+      onClick={() => handleRoomSelect(room)}
+    >
+      <div className="hotel-room-number">Room {room.roomNumber}</div>
+
+      <div className="hotel-room-price">
+        <div className="hotel-room-type">{room.roomType || 'Standard'}</div>
+        ₹{room.pricePerDay || 'NA'}/day
+      </div>
+
+      {room.status === 'available' && (
+        <div className="hotel-room-status">
+          Available
+        </div>
+      )}
+
+      {room.status === 'occupied' && activeBookings[room.roomId] && (
+        <div className="room-time-remaining">
+          {getRemainingTime(activeBookings[room.roomId].checkOut)}
+        </div>
+      )}
+    </div>
+))}
+
         </div>
       </div>
 
