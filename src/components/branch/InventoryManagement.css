@@ -360,104 +360,207 @@
 }
 
 @media (max-width: 1024px) {
+  /* Tablet styles */
+  .inventory-management-container {
+    max-width: 98vw;
+    padding: 1rem;
+  }
+
   .inventory-management-table-header,
   .inventory-management-table-row {
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    min-width: 800px; /* Ensure table has minimum width */
   }
 
   .inventory-management-transactions-table .inventory-management-table-header,
   .inventory-management-transactions-table .inventory-management-table-row {
-    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    min-width: 900px;
+  }
+
+  .inventory-management-low-stock-table .inventory-management-table-header,
+  .inventory-management-low-stock-table .inventory-management-table-row {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    min-width: 600px;
   }
 }
 
 @media (max-width: 768px) {
+  /* Small tablet styles */
   .inventory-management-container {
-    padding: clamp(0.5rem, 2vw, 1rem);
+    padding: 0.75rem;
+    border-radius: 12px;
+  }
+
+  .inventory-management-title {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
   }
 
   .inventory-management-tabs {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row;
+    overflow-x: auto;
+    padding-bottom: 8px;
+    scrollbar-width: thin;
+  }
+
+  .inventory-management-tabs::-webkit-scrollbar {
+    height: 4px;
   }
 
   .inventory-management-tab {
-    text-align: center;
-  }
-
-  .inventory-management-items-table,
-  .inventory-management-transactions-table,
-  .inventory-management-low-stock-table {
-    display: block;
-    overflow-x: auto; /* Enable horizontal scrolling */
-    white-space: nowrap; /* Prevent wrapping */
-  }
-
-  .inventory-management-table-header,
-  .inventory-management-table-row,
-  .inventory-management-transactions-table .inventory-management-table-header,
-  .inventory-management-transactions-table .inventory-management-table-row,
-  .inventory-management-low-stock-table .inventory-management-table-header,
-  .inventory-management-low-stock-table .inventory-management-table-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); /* Maintain grid layout */
-    gap: clamp(0.3rem, 1.5vw, 0.5rem);
-    min-width: 600px; /* Ensure table width for scrolling */
-  }
-
-  .inventory-management-table-row > div {
-    display: flex;
-    justify-content: flex-start;
-    align-items: center;
     white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    max-width: 100%;
-    padding-left: 0.5rem;
   }
 
   .inventory-management-search-filter {
     flex-direction: column;
-    align-items: stretch;
-  }
-}
-
-@media (max-width: 480px) {
-  .inventory-management-modal-content {
-    max-width: 95vw;
-    padding: clamp(0.5rem, 2vw, 1rem);
   }
 
-  .inventory-management-title {
-    font-size: clamp(1.2rem, 4vw, 1.8rem);
-  }
-
-  .inventory-management-actions {
-    flex-direction: column;
-    align-items: stretch;
-  }
-
-  .inventory-management-edit-btn,
-  .inventory-management-delete-btn {
+  .inventory-management-search,
+  .inventory-management-date-filter {
     width: 100%;
-    text-align: center;
-    padding: clamp(0.5rem, 2vw, 0.75rem);
-    font-size: clamp(0.9rem, 3vw, 1rem);
   }
-}
 
-@media (max-width: 360px) {
-  .inventory-management-container {
-    padding: clamp(0.3rem, 1.5vw, 0.8rem);
+  /* Table styles for mobile */
+  .inventory-management-items-table,
+  .inventory-management-transactions-table,
+  .inventory-management-low-stock-table {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    border-radius: 8px;
+  }
+
+  .inventory-management-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin-bottom: 1rem;
+    background: linear-gradient(to right, white 30%, rgba(255,255,255,0)),
+                linear-gradient(to left, white 30%, rgba(255,255,255,0));
+    background-position: left center, right center;
+    background-repeat: no-repeat;
+    background-size: 40px 100%, 40px 100%;
+    background-attachment: local, local;
   }
 
   .inventory-management-table-header,
   .inventory-management-table-row {
-    padding: clamp(0.3rem, 1.5vw, 0.5rem);
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    min-width: 700px;
+    gap: 0.5rem;
+    padding: 0.75rem;
   }
 
-  .inventory-management-form-group input,
-  .inventory-management-form-group select {
-    font-size: clamp(0.8rem, 2.5vw, 0.9rem);
+  .inventory-management-transactions-table .inventory-management-table-header,
+  .inventory-management-transactions-table .inventory-management-table-row {
+    min-width: 800px;
   }
+
+  .inventory-management-low-stock-table .inventory-management-table-header,
+  .inventory-management-low-stock-table .inventory-management-table-row {
+    min-width: 500px;
+  }
+
+  .inventory-management-table-row > div {
+    display: flex;
+    align-items: center;
+    min-height: 40px;
+    padding: 0 0.25rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .inventory-management-actions {
+    flex-direction: row;
+    flex-wrap: nowrap;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Mobile styles */
+  .inventory-management-container {
+    max-width: 100vw;
+    padding: 0.5rem;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .inventory-management-title {
+    font-size: 1.3rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .inventory-management-tabs {
+    gap: 0.25rem;
+  }
+
+  .inventory-management-tab {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .inventory-management-table-header,
+  .inventory-management-table-row {
+    grid-template-columns: repeat(auto-fit, minmax(80px, 1fr));
+    min-width: 600px;
+    padding: 0.5rem;
+    font-size: 0.85rem;
+  }
+
+  .inventory-management-transactions-table .inventory-management-table-header,
+  .inventory-management-transactions-table .inventory-management-table-row {
+    min-width: 700px;
+  }
+
+  .inventory-management-low-stock-table .inventory-management-table-header,
+  .inventory-management-low-stock-table .inventory-management-table-row {
+    min-width: 450px;
+  }
+
+  .inventory-management-actions {
+    gap: 0.25rem;
+  }
+
+  .inventory-management-edit-btn,
+  .inventory-management-delete-btn {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .inventory-management-modal-content {
+    width: 95vw;
+    padding: 1rem;
+  }
+}
+
+@media (max-width: 360px) {
+  /* Small mobile devices */
+  .inventory-management-title {
+    font-size: 1.2rem;
+  }
+
+  .inventory-management-tab {
+    padding: 0.4rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .inventory-management-table-header,
+  .inventory-management-table-row {
+    grid-template-columns: repeat(auto-fit, minmax(70px, 1fr));
+    min-width: 550px;
+    font-size: 0.8rem;
+  }
+
+  .inventory-management-transactions-table .inventory-management-table-header,
+  .inventory-management-transactions-table .inventory-management-table-row {
+    min-width: 650px;
+  }
+
+  .inventory-management-low-stock-table .inventory-management-table-header,
+  .inventory-management-low-stock-table .inventory-management-table-row {
+    min-width: 400px;
+  }
+
 }
